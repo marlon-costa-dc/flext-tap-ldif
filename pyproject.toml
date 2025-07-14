@@ -1,0 +1,302 @@
+[build-system]
+requires = ["poetry-core>=1.9.0"]
+build-backend = "poetry.core.masonry.api"
+
+[project]
+name = "flext-tap-ldif"
+version = "0.1.0"
+description = "FLEXT Tap LDIF - Singer Tap for LDIF file format data extraction"
+authors = [{ name = "FLEXT Team", email = "team@flext.sh" }]
+maintainers = [{ name = "FLEXT Team", email = "team@flext.sh" }]
+license = { text = "MIT" }
+readme = "README.md"
+requires-python = ">=3.13,<3.14"
+dependencies = [
+    # LDIF Tap specific dependencies
+    "singer-sdk>=0.39.0",
+    "ldap3>=2.9.0",
+    "python-ldap>=3.4.0",
+    "tenacity>=9.0.0",
+    "cryptography",
+    "orjson>=3.10.0",
+    "python-dateutil>=2.9.0",
+]
+keywords = ["flext", "singer", "tap", "ldif", "meltano", "directory", "etl"]
+classifiers = [
+    "Development Status :: 4 - Beta",
+    "Intended Audience :: Developers",
+    "License :: OSI Approved :: MIT License",
+    "Operating System :: OS Independent",
+    "Programming Language :: Python :: 3.13",
+    "Programming Language :: Python :: 3 :: Only",
+    "Topic :: Software Development :: Libraries :: Python Modules",
+    "Topic :: Database",
+    "Topic :: System :: Systems Administration :: Authentication/Directory",
+    "Topic :: System :: Systems Administration :: Authentication/Directory :: LDAP",
+    "Typing :: Typed",
+]
+
+[project.urls]
+Homepage = "https://github.com/marlon-costa-dc/flext-tap-ldif"
+Repository = "https://github.com/marlon-costa-dc/flext-tap-ldif"
+Documentation = "https://github.com/marlon-costa-dc/flext-tap-ldif/blob/main/README.md"
+
+[project.scripts]
+tap-ldif = "flext_tap_ldif.tap:main"
+flext-tap-ldif = "flext_tap_ldif.tap:main"
+
+[tool.poetry]
+name = "flext-tap-ldif"
+version = "0.1.0"
+description = "FLEXT Tap LDIF - Singer Tap for LDIF file format data extraction"
+authors = ["FLEXT Team <team@flext.sh>"]
+readme = "README.md"
+packages = [{ include = "flext_tap_ldif", from = "src" }]
+
+[tool.poetry.dependencies]
+python = ">=3.13,<3.14"
+
+# Core FLEXT dependencies - primary source of truth
+flext-core = { path = "../flext-core", develop = true }
+flext-observability = { path = "../flext-observability", develop = true }
+flext-ldap = { path = "../flext-ldap", develop = true }
+
+# LDIF Tap specific dependencies
+singer-sdk = ">=0.39.0"
+ldap3 = ">=2.9.0"
+python-ldap = ">=3.4.0"
+tenacity = ">=9.0.0"
+cryptography = "*"
+orjson = ">=3.10.0"
+python-dateutil = ">=2.9.0"
+
+# Workspace-managed dependencies (inherited):
+# pydantic, pydantic-settings, click, structlog, etc.
+# are all provided at workspace level - no duplication needed
+
+[tool.poetry.group.dev.dependencies]
+# Development dependencies
+pytest = ">=8.0.0"
+pytest-asyncio = ">=0.23.0"
+pytest-cov = ">=4.0.0"
+pytest-mock = ">=3.12.0"
+pytest-xdist = ">=3.6.0"
+pytest-timeout = ">=2.3.1"
+pytest-sugar = ">=1.0.0"
+pytest-clarity = ">=1.0.1"
+pytest-benchmark = ">=4.0.0"
+
+# Code quality
+ruff = ">=0.8.0"
+mypy = ">=1.13.0"
+pre-commit = ">=4.0.0"
+bandit = ">=1.8.0"
+
+# Documentation
+mkdocs = ">=1.6.0"
+mkdocs-material = ">=9.5.0"
+mkdocs-mermaid2-plugin = ">=1.1.0"
+
+[tool.poetry.scripts]
+tap-ldif = "flext_tap_ldif.tap:main"
+flext-tap-ldif = "flext_tap_ldif.tap:main"
+
+# Project-specific tool configurations
+[tool.pytest.ini_options]
+minversion = "8.0"
+addopts = [
+    "-ra",
+    "--strict-markers",
+    "--strict-config",
+    "--cov=flext_tap_ldif",
+    "--cov-branch",
+    "--cov-report=term-missing:skip-covered",
+    "--cov-report=html:reports/coverage",
+    "--cov-report=xml:reports/coverage.xml",
+    "--cov-fail-under=90",
+    "--maxfail=1",
+    "--tb=short",
+]
+markers = [
+    "unit: Unit tests",
+    "integration: Integration tests",
+    "slow: Slow tests",
+    "smoke: Smoke tests",
+    "ldif: marks tests as LDIF tests",
+    "singer: marks tests as Singer tests",
+    "tap: marks tests as tap tests",
+    "stream: marks tests as stream tests",
+    "requires_ldif: tests that need LDIF files",
+    "file_processing: tests for file processing",
+]
+
+[tool.ruff]
+target-version = "py313"
+line-length = 88
+src = ["src", "tests"]
+
+[tool.ruff.lint]
+select = [
+    "ALL",
+]
+ignore = [
+    # Line length and formatting (handled by formatter)
+    "E501",    # line too long
+    "W505",    # doc line too long
+    "COM812",  # trailing comma missing (conflicts with formatter)
+    "ISC001",  # single line implicit string concatenation
+    
+    # Import and dependency issues (common in Singer taps)
+    "I001",    # import block unsorted (handled by isort)
+    "F401",    # unused imports (common in __init__.py files)
+    "F403",    # star imports (common in __init__.py)
+    "F405",    # star import usage
+    "F841",    # unused variable (common in development)
+    
+    # Documentation style flexibility (Singer SDK patterns)
+    "D100",    # missing docstring in public module
+    "D101",    # missing docstring in public class
+    "D102",    # missing docstring in public method
+    "D103",    # missing docstring in public function
+    "D104",    # missing docstring in public package
+    "D105",    # missing docstring in magic method
+    "D106",    # missing docstring in public nested class
+    "D107",    # missing docstring in __init__
+    "D203",    # blank line before class docstring (conflicts with D211)
+    "D213",    # multi-line docstring summary second line (conflicts with D212)
+    
+    # Code style flexibility (Singer patterns)
+    "ERA001",  # commented out code (common during development)
+    "TD002",   # missing author in TODO
+    "TD003",   # missing issue link in TODO
+    "FIX002",  # line contains TODO
+    "T201",    # print statement (common in scripts/debug)
+    "T203",    # pprint statement
+    
+    # Complexity (LDIF processing can be complex)
+    "C901",    # function too complex
+    "PLR0913", # too many arguments (LDIF operations need many params)
+    "PLR0915", # too many statements
+    "PLR2004", # magic value used in comparison
+    "PLR0912", # too many branches
+    "PLR0911", # too many return statements
+    
+    # Type checking flexibility (Singer SDK uses Any extensively)
+    "ANN401",  # any type usage (Singer SDK requires Any types)
+    
+    # Security exceptions (LDIF patterns)
+    "S105",    # possible hardcoded password (config patterns)
+    "S106",    # possible hardcoded password (test secrets)
+    "S603",    # subprocess call
+    "S607",    # starting process with partial executable path
+    "S608",    # possible SQL injection (handled by LDIF driver)
+    
+    # Error handling flexibility
+    "EM101",   # raw string in exception
+    "EM102",   # f-string in exception
+    "TRY003",  # avoid long exception messages
+    "TRY300",  # consider moving to else block
+    "TRY301",  # raise within try block
+    
+    # LDIF specific patterns
+    "PTH123",  # use Path.open() (config files need standard open)
+    "PLC0415", # import should be at top-level (lazy imports for LDIF)
+    
+    # Performance (premature optimization in data extraction)
+    "PERF203", # try-except in loop
+    "PERF401", # manual list comprehension
+    
+    # LDIF development patterns
+    "FBT001",  # boolean trap (LDIF boolean parameters)
+    "FBT002",  # boolean default positional argument
+    "FBT003",  # boolean positional value in function call
+    "N815",    # mixed case variable (LDIF attribute names)
+    "SIM108",  # use ternary operator (readability in complex LDIF logic)
+    
+    # Documentation patterns
+    "D401",    # first line should be in imperative mood (descriptive for data streams)
+    
+    # LDIF attribute patterns  
+    "A002",    # argument shadows builtin (dn parameter common in LDIF)
+    "A003",    # class attribute shadows builtin
+    
+    # External library integration
+    "DTZ005",  # timezone naive datetime (handled by libraries)
+    "BLE001",  # blind except (external LDIF error handling)
+    "ASYNC100", # async function with no await
+    
+    # Ruff-specific
+    "RUF100",  # unused noqa directive (cleanup can be done later)
+]
+
+[tool.ruff.lint.per-file-ignores]
+"tests/*" = [
+    "S101",    # assert allowed in tests
+    "PLR2004", # magic values allowed in tests
+    "SLF001",  # private member access allowed in tests
+    "ARG001",  # unused function arguments allowed in tests
+    "FBT001",  # boolean positional args allowed in tests
+    "FBT003",  # boolean positional args allowed in tests
+]
+
+"tests/**/*.py" = ["S101", "D102", "N801", "N802", "N806", "PLR2004", "F401", "PLC0415", "G004", "T201"]
+"**/tests/*.py" = ["S101", "D102", "N801", "N802", "N806", "PLR2004", "F401", "PLC0415", "G004", "T201"]
+"test_*.py" = ["S101", "D102", "N801", "N802", "N806", "PLR2004", "F401", "PLC0415", "G004", "T201"]
+"**/test_*.py" = ["S101", "D102", "N801", "N802", "N806", "PLR2004", "F401", "PLC0415", "G004", "T201"]
+
+# Auto-generated files - exclude from ALL linting
+"**/proto/*_pb2.py" = ["ALL"]
+"**/proto/*_pb2_grpc.py" = ["ALL"]
+"**/*_pb2.py" = ["ALL"]
+"**/*_pb2_grpc.py" = ["ALL"]
+"**/generated/**/*.py" = ["ALL"]
+[tool.ruff.lint.isort]
+known-first-party = [
+    "flext_tap_ldif",
+    "flext_core",
+    "flext_observability",
+    "flext_ldap",
+]
+force-single-line = true
+
+[tool.mypy]
+python_version = "3.13"
+files = ["src", "tests"]
+warn_return_any = true
+warn_unused_configs = true
+disallow_untyped_defs = true
+disallow_incomplete_defs = true
+check_untyped_defs = true
+disallow_untyped_decorators = true
+no_implicit_optional = true
+warn_redundant_casts = true
+warn_unused_ignores = true
+warn_no_return = true
+warn_unreachable = true
+strict_equality = true
+show_error_codes = true
+show_error_context = true
+pretty = true
+
+[[tool.mypy.overrides]]
+module = ["singer_sdk.*", "ldap3.*", "ldap.*"]
+ignore_missing_imports = true
+
+[tool.coverage.run]
+source = ["src"]
+branch = true
+omit = ["*/tests/*", "*/test_*", "*/__pycache__/*", "*/venv/*", "*/.venv/*"]
+
+[tool.coverage.report]
+exclude_lines = [
+    "pragma: no cover",
+    "def __repr__",
+    "if self.debug:",
+    "if settings.DEBUG",
+    "raise AssertionError",
+    "raise NotImplementedError",
+    "if 0:",
+    "if __name__ == .__main__.:",
+    "class .*\\bProtocol\\):",
+    "@(abc\\.)?abstractmethod",
+]

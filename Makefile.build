@@ -1,0 +1,91 @@
+# FLEXT Project Build System
+# =========================
+# Standardized build targets for FLEXT ecosystem
+#
+# This file provides common build targets shared across all FLEXT projects.
+# It follows the principle of convention over configuration.
+
+.PHONY: workspace-check version-info build-info clean-reports
+
+# Build system constants
+BUILD_SYSTEM_VERSION := 2.1.0
+BUILD_DATE := $(shell date -u +"%Y-%m-%dT%H:%M:%SZ")
+GIT_COMMIT := $(shell git rev-parse --short HEAD 2>/dev/null || echo "unknown")
+GIT_BRANCH := $(shell git rev-parse --abbrev-ref HEAD 2>/dev/null || echo "unknown")
+
+# Build information
+build-info: ## Show build information
+	@echo "Build System Version: $(BUILD_SYSTEM_VERSION)"
+	@echo "Build Date: $(BUILD_DATE)"
+	@echo "Git Commit: $(GIT_COMMIT)"
+	@echo "Git Branch: $(GIT_BRANCH)"
+	@echo "Python Version: $(shell python --version 2>/dev/null || echo 'Not found')"
+	@echo "Poetry Version: $(shell poetry --version 2>/dev/null || echo 'Not found')"
+
+# Version management
+version-info: ## Show version information
+	@echo "Project Version: $(shell poetry version -s 2>/dev/null || echo 'unknown')"
+	@echo "Build System: $(BUILD_SYSTEM_VERSION)"
+
+# Quality gates
+quality-gate: lint type-check security test ## Run complete quality gate
+	@echo "✅ Quality gate passed for $(PROJECT_NAME)"
+
+# Report management
+clean-reports: ## Clean all report directories
+	@echo "🧹 Cleaning reports..."
+	@rm -rf reports/ htmlcov/ .coverage .pytest_cache/ .mypy_cache/ .ruff_cache/
+
+reports-dir: ## Create reports directory
+	@mkdir -p reports
+
+# Workspace integration
+workspace-check: ## Check workspace consistency
+	@echo "🔍 Checking workspace consistency..."
+	@if [ ! -f "../pyproject.toml" ]; then \
+		echo "⚠️  Warning: Not in FLEXT workspace root"; \
+	fi
+
+# CI/CD Integration
+ci-install: ## Install dependencies for CI/CD
+	@echo "🤖 Installing CI/CD dependencies..."
+	poetry install --group dev --group test
+
+ci-test: reports-dir ## Run tests for CI/CD
+	@echo "🤖 Running CI/CD test suite..."
+	poetry run pytest tests/ \
+		--cov=src \
+		--cov-report=xml:reports/coverage.xml \
+		--cov-report=html:htmlcov \
+		--junit-xml=reports/pytest.xml \
+		--tb=short
+
+ci-check: ## Run all CI/CD checks
+	@echo "🤖 Running CI/CD quality checks..."
+	@$(MAKE) lint type-check security ci-test
+	@echo "✅ CI/CD checks complete"
+
+# Development helpers
+watch-test: ## Watch for changes and run tests
+	@echo "👀 Watching for changes..."
+	@poetry run pytest-watch tests/
+
+debug-deps: ## Debug dependency issues
+	@echo "🔍 Debugging dependencies..."
+	@poetry show --tree
+	@echo "\n📋 Outdated packages:"
+	@poetry show --outdated
+
+# Build optimization
+build-optimized: clean ## Optimized build
+	@echo "⚡ Running optimized build..."
+	@$(MAKE) check
+	@$(MAKE) build
+	@echo "✅ Optimized build complete"
+
+# Integration with workspace
+sync-workspace: ## Sync with workspace standards
+	@echo "🔄 Syncing with workspace standards..."
+	@if [ -f "../scripts/sync_dependencies.py" ]; then \
+		cd .. && python scripts/sync_dependencies.py $(PROJECT_NAME); \
+	fi
