@@ -402,7 +402,7 @@ def mock_ldif_tap() -> Any:
     class MockLDIFTap:
         def __init__(self, config: dict[str, Any]) -> None:
             self.config = config
-            self.discovered_streams = []
+            self.discovered_streams: list[dict[str, Any]] = []
 
         def discover_streams(self) -> list[dict[str, Any]]:
             return self.discovered_streams
@@ -429,7 +429,7 @@ def mock_ldif_parser() -> Any:
     class MockLDIFParser:
         def __init__(self, config: dict[str, Any]) -> None:
             self.config = config
-            self.parsed_entries = []
+            self.parsed_entries: list[dict[str, Any]] = []
 
         async def parse_file(self, file_path: str) -> dict[str, Any]:
             return {
