@@ -5,13 +5,10 @@ from __future__ import annotations
 from pathlib import Path
 from typing import Any
 
-from pydantic import Field
-from pydantic import field_validator
-from singer_sdk import typing as th
-from singer_sdk.configuration_base import ConfigBase
+from pydantic import BaseModel, Field, field_validator
 
 
-class TapLDIFConfig(ConfigBase):
+class TapLDIFConfig(BaseModel):
     """Configuration for the LDIF tap."""
 
     # File Input Configuration
@@ -19,12 +16,12 @@ class TapLDIFConfig(ConfigBase):
         default=None,
         description="Path to the LDIF file to extract data from",
     )
-    
+
     file_pattern: str | None = Field(
         default=None,
         description="Pattern for multiple LDIF files (e.g., '*.ldif')",
     )
-    
+
     directory_path: str | None = Field(
         default=None,
         description="Directory containing LDIF files",
@@ -35,17 +32,17 @@ class TapLDIFConfig(ConfigBase):
         default=None,
         description="Filter entries by base DN pattern",
     )
-    
+
     object_class_filter: list[str] | None = Field(
         default=None,
         description="Filter entries by object class",
     )
-    
+
     attribute_filter: list[str] | None = Field(
         default=None,
         description="Include only specified attributes",
     )
-    
+
     exclude_attributes: list[str] | None = Field(
         default=None,
         description="Exclude specified attributes",
@@ -56,24 +53,24 @@ class TapLDIFConfig(ConfigBase):
         default="utf-8",
         description="File encoding (default: utf-8)",
     )
-    
+
     batch_size: int = Field(
         default=1000,
         ge=1,
         le=10000,
         description="Number of entries to process in each batch",
     )
-    
+
     include_operational_attributes: bool = Field(
         default=False,
         description="Include operational attributes in output",
     )
-    
+
     strict_parsing: bool = Field(
         default=True,
         description="Enable strict LDIF parsing (fail on errors)",
     )
-    
+
     max_file_size_mb: int = Field(
         default=100,
         ge=1,
@@ -109,13 +106,13 @@ class TapLDIFConfig(ConfigBase):
                 raise ValueError(msg)
         return v
 
-    def model_post_init(self, __context: Any) -> None:
+    def model_post_init(self, __context: Any, /) -> None:
         """Validate configuration after initialization."""
         super().model_post_init(__context)
-        
+
         # Ensure at least one input source is specified
         if not any([self.file_path, self.file_pattern, self.directory_path]):
-            msg = "At least one of file_path, file_pattern, or directory_path must be specified"
+            msg = "At least one input source must be specified: file_path, file_pattern, or directory_path"
             raise ValueError(msg)
 
     @property

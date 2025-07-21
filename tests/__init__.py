@@ -1,1 +1,1 @@
-"""Tests for flext-tap-ldif."""
+"""Tests for flext-data.taps.flext-tap-ldif."""

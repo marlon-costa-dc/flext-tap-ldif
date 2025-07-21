@@ -6,12 +6,9 @@ This module implements the main tap class for LDIF file format data extraction.
 from __future__ import annotations
 
 import logging
-from typing import TYPE_CHECKING
-from typing import Any
-from typing import ClassVar
+from typing import TYPE_CHECKING, Any, ClassVar
 
-from singer_sdk import Tap
-from singer_sdk import singer_typing as th
+from singer_sdk import Tap, typing as th
 
 from flext_tap_ldif.config import TapLDIFConfig
 from flext_tap_ldif.streams import LDIFEntriesStream
@@ -104,6 +101,7 @@ class TapLDIF(Tap):
 
         Returns:
             A list of discovered streams.
+
         """
         return [
             LDIFEntriesStream(
@@ -118,15 +116,33 @@ class TapLDIF(Tap):
 
         Returns:
             Schema definition for LDIF entries.
+
         """
         return th.PropertiesList(
-            th.Property("dn", th.StringType, required=True, description="Distinguished Name"),
-            th.Property("object_class", th.ArrayType(th.StringType), description="Object classes"),
+            th.Property(
+                "dn",
+                th.StringType,
+                required=True,
+                description="Distinguished Name",
+            ),
+            th.Property(
+                "object_class",
+                th.ArrayType(th.StringType),
+                description="Object classes",
+            ),
             th.Property("attributes", th.ObjectType(), description="LDAP attributes"),
             th.Property("change_type", th.StringType, description="LDIF change type"),
             th.Property("source_file", th.StringType, description="Source LDIF file"),
-            th.Property("line_number", th.IntegerType, description="Line number in source file"),
-            th.Property("entry_size", th.IntegerType, description="Size of entry in bytes"),
+            th.Property(
+                "line_number",
+                th.IntegerType,
+                description="Line number in source file",
+            ),
+            th.Property(
+                "entry_size",
+                th.IntegerType,
+                description="Size of entry in bytes",
+            ),
         ).to_dict()
 
 

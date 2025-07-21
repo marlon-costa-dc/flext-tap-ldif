@@ -5,10 +5,11 @@ from __future__ import annotations
 import base64
 import logging
 import re
-from pathlib import Path
-from typing import Any
-from typing import Generator
-from typing import Iterator
+from typing import TYPE_CHECKING, Any
+
+if TYPE_CHECKING:
+    from collections.abc import Generator, Iterator
+    from pathlib import Path
 
 logger = logging.getLogger(__name__)
 
@@ -21,6 +22,7 @@ class LDIFProcessor:
 
         Args:
             config: Configuration dictionary from the tap.
+
         """
         self.config = config
         self.encoding = config.get("encoding", "utf-8")
@@ -37,7 +39,7 @@ class LDIFProcessor:
         self._attr_pattern = re.compile(r"^([a-zA-Z][a-zA-Z0-9-]*)(::?)?\s*(.*)$")
         self._base64_pattern = re.compile(r"^([a-zA-Z][a-zA-Z0-9-]*)::\s*(.*)$")
 
-    def process_file(self, file_path: Path) -> Generator[dict[str, Any], None, None]:
+    def process_file(self, file_path: Path) -> Generator[dict[str, Any]]:
         """Process a single LDIF file and yield records.
 
         Args:
@@ -45,9 +47,9 @@ class LDIFProcessor:
 
         Yields:
             Dictionary records representing LDIF entries.
+
         """
-        logger.info(f"Processing LDIF file: {file_path}")
-        
+        logger.info("Processing LDIF file: %s", file_path)
         try:
             with file_path.open("r", encoding=self.encoding) as file:
                 yield from self._parse_ldif_content(file, str(file_path))
@@ -59,7 +61,11 @@ class LDIFProcessor:
                 logger.warning(error_msg)
                 return
 
-    def _parse_ldif_content(self, file: Iterator[str], source_file: str) -> Generator[dict[str, Any], None, None]:
+    def _parse_ldif_content(
+        self,
+        file: Iterator[str],
+        source_file: str,
+    ) -> Generator[dict[str, Any]]:
         """Parse LDIF content from file iterator.
 
         Args:
@@ -68,16 +74,17 @@ class LDIFProcessor:
 
         Yields:
             Dictionary records representing LDIF entries.
+
         """
         current_entry: dict[str, Any] = {}
         line_number = 0
         entry_start_line = 0
         entry_size = 0
 
-        for line in file:
+        for raw_line in file:
             line_number += 1
-            original_line = line
-            line = line.rstrip("\r\n")
+            original_line = raw_line
+            line = raw_line.rstrip("\r\n")
             entry_size += len(original_line.encode(self.encoding))
 
             # Skip empty lines and comments
@@ -86,7 +93,7 @@ class LDIFProcessor:
 
             # Handle line continuations (lines starting with space)
             if line.startswith(" ") and current_entry:
-                if "attributes" in current_entry and current_entry["attributes"]:
+                if current_entry.get("attributes"):
                     # Get the last attribute and append continuation
                     last_attr = list(current_entry["attributes"].keys())[-1]
                     if isinstance(current_entry["attributes"][last_attr], list):
@@ -99,12 +106,11 @@ class LDIFProcessor:
             dn_match = self._dn_pattern.match(line)
             if dn_match:
                 # Yield previous entry if exists
-                if current_entry:
-                    if self._should_include_entry(current_entry):
-                        current_entry["source_file"] = source_file
-                        current_entry["line_number"] = entry_start_line
-                        current_entry["entry_size"] = entry_size
-                        yield self._finalize_entry(current_entry)
+                if current_entry and self._should_include_entry(current_entry):
+                    current_entry["source_file"] = source_file
+                    current_entry["line_number"] = entry_start_line
+                    current_entry["entry_size"] = entry_size
+                    yield self._finalize_entry(current_entry)
 
                 # Start new entry
                 current_entry = {
@@ -128,27 +134,36 @@ class LDIFProcessor:
             current_entry["entry_size"] = entry_size
             yield self._finalize_entry(current_entry)
 
-    def _parse_attribute_line(self, line: str, entry: dict[str, Any], line_number: int) -> None:
+    def _parse_attribute_line(
+        self,
+        line: str,
+        entry: dict[str, Any],
+        line_number: int,
+    ) -> None:
         """Parse an attribute line and add to entry.
 
         Args:
             line: The attribute line to parse.
             entry: The current entry being built.
             line_number: Current line number for error reporting.
+
         """
         # Handle base64 encoded values
         base64_match = self._base64_pattern.match(line)
         if base64_match:
             attr_name = base64_match.group(1).lower()
-            encoded_value = base64_match.group(2).strip()
+            encoded_value = base64_match.group(2)
             try:
-                decoded_value = base64.b64decode(encoded_value).decode(self.encoding)
-                self._add_attribute_value(entry, attr_name, decoded_value)
+                base64.b64decode(encoded_value).decode(self.encoding)
             except Exception as e:
                 if self.strict_parsing:
-                    raise ValueError(f"Error decoding base64 value at line {line_number}: {e}") from e
-                else:
-                    logger.warning(f"Skipping invalid base64 value at line {line_number}: {e}")
+                    msg = f"Failed to decode base64 value at line {line_number}: {e}"
+                    raise ValueError(msg) from e
+                logger.warning(
+                    "Skipping invalid base64 value at line %s: %s",
+                    line_number,
+                    e,
+                )
             return
 
         # Handle regular attribute lines
@@ -157,16 +172,27 @@ class LDIFProcessor:
             attr_name = attr_match.group(1).lower()
             value = attr_match.group(3)
             self._add_attribute_value(entry, attr_name, value)
-        elif self.strict_parsing and not line.startswith("-"):  # Skip change record separators
-            raise ValueError(f"Invalid attribute line format at line {line_number}: {line}")
+        elif self.strict_parsing and not line.startswith(
+            "-",
+        ):  # Skip change record separators
+            raise ValueError(msg)
+            raise ValueError(
+                msg,
+            )
 
-    def _add_attribute_value(self, entry: dict[str, Any], attr_name: str, value: str) -> None:
+    def _add_attribute_value(
+        self,
+        entry: dict[str, Any],
+        attr_name: str,
+        value: str,
+    ) -> None:
         """Add an attribute value to the entry.
 
         Args:
             entry: The entry to add the attribute to.
             attr_name: The attribute name.
             value: The attribute value.
+
         """
         # Handle special attributes
         if attr_name == "objectclass":
@@ -199,6 +225,7 @@ class LDIFProcessor:
 
         Returns:
             True if the entry should be included, False otherwise.
+
         """
         # Check base DN filter
         if self.base_dn_filter:
@@ -224,6 +251,7 @@ class LDIFProcessor:
 
         Returns:
             True if the attribute is operational, False otherwise.
+
         """
         operational_attrs = {
             "createtimestamp",
@@ -252,6 +280,7 @@ class LDIFProcessor:
 
         Returns:
             The finalized entry.
+
         """
         # Ensure object_class is always a list
         if not entry["object_class"]:

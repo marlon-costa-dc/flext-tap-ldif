@@ -1,4 +1,4 @@
-"""Version information for flext-tap-ldif."""
+"""Version information for flext-data.taps.flext-tap-ldif."""
 
 from __future__ import annotations
 
