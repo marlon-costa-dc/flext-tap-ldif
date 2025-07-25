@@ -5,6 +5,8 @@ from __future__ import annotations
 from pathlib import Path
 from typing import Any
 
+# MIGRATED: Singer SDK imports centralized via flext-meltano
+from flext_meltano.common import validate_directory_path, validate_file_path
 from pydantic import BaseModel, Field, field_validator
 
 
@@ -80,31 +82,15 @@ class TapLDIFConfig(BaseModel):
 
     @field_validator("file_path")
     @classmethod
-    def validate_file_path(cls, v: str | None) -> str | None:
-        """Validate that file_path exists if provided."""
-        if v is not None:
-            path = Path(v)
-            if not path.exists():
-                msg = f"File path does not exist: {v}"
-                raise ValueError(msg)
-            if not path.is_file():
-                msg = f"Path is not a file: {v}"
-                raise ValueError(msg)
-        return v
+    def validate_file_path_field(cls, v: str | None) -> str | None:
+        """Use consolidated file path validation."""
+        return validate_file_path(v)
 
     @field_validator("directory_path")
     @classmethod
-    def validate_directory_path(cls, v: str | None) -> str | None:
-        """Validate that directory_path exists if provided."""
-        if v is not None:
-            path = Path(v)
-            if not path.exists():
-                msg = f"Directory path does not exist: {v}"
-                raise ValueError(msg)
-            if not path.is_dir():
-                msg = f"Path is not a directory: {v}"
-                raise ValueError(msg)
-        return v
+    def validate_directory_path_field(cls, v: str | None) -> str | None:
+        """Use consolidated directory path validation."""
+        return validate_directory_path(v)
 
     def model_post_init(self, __context: Any, /) -> None:
         """Validate configuration after initialization."""

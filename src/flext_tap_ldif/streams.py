@@ -1,24 +1,26 @@
 """Stream classes for FLEXT Tap LDIF."""
 
+# MIGRATED: Singer SDK imports centralized via flext-meltano
 from __future__ import annotations
 
-import logging
 from pathlib import Path
 from typing import TYPE_CHECKING, Any, ClassVar
+
+from flext_core import get_logger
 
 if TYPE_CHECKING:
     from collections.abc import Mapping
 
-from singer_sdk import Stream, typing as th
+from flext_meltano import Stream, th
 
-from flext_tap_ldif.ldif_processor import LDIFProcessor
+from flext_tap_ldif.ldif_processor import FlextLDIFProcessorWrapper
 
 if TYPE_CHECKING:
     from collections.abc import Iterable
 
-    from singer_sdk import Tap
+    from flext_meltano.singer import FlextMeltanoTap as Tap
 
-logger = logging.getLogger(__name__)
+logger = get_logger(__name__)
 
 
 class LDIFEntriesStream(Stream):
@@ -66,7 +68,7 @@ class LDIFEntriesStream(Stream):
 
         """
         super().__init__(tap, schema, name)
-        self._processor = LDIFProcessor(dict(tap.config))
+        self._processor = FlextLDIFProcessorWrapper(dict(tap.config))
 
     def get_records(
         self,
@@ -86,19 +88,19 @@ class LDIFEntriesStream(Stream):
         # Determine input files to process
         files_to_process = self._get_input_files()
 
-        logger.info("Processing %s LDIF files", len(files_to_process))
+        logger.info(f"Processing {len(files_to_process)} LDIF files")
 
         for file_path in files_to_process:
-            logger.info("Processing file: %s", file_path)
+            logger.info(f"Processing file: {file_path}")
             try:
                 # Process the LDIF file and yield records
                 yield from self._processor.process_file(file_path)
             except Exception as e:
                 if config.get("strict_parsing", True):
-                    logger.exception("Error processing file %s", file_path)
+                    logger.exception(f"Error processing file {file_path}")
                     raise
                 else:
-                    logger.warning("Skipping file %s due to error: %s", file_path, e)
+                    logger.warning(f"Skipping file {file_path} due to error: {e}")
                     continue
 
     def _get_input_files(self) -> list[Path]:
@@ -139,12 +141,10 @@ class LDIFEntriesStream(Stream):
                     filtered_files.append(file_path)
                 else:
                     logger.warning(
-                        "Skipping file %s - size %s bytes exceeds limit of %s bytes",
-                        file_path,
-                        file_path.stat().st_size,
-                        max_size_bytes,
+                        f"Skipping file {file_path} - size {file_path.stat().st_size} bytes "
+                        f"exceeds limit of {max_size_bytes} bytes"
                     )
             except OSError as e:
-                logger.warning("Could not check size for file %s: %s", file_path, e)
+                logger.warning(f"Could not check size for file {file_path}: {e}")
 
         return sorted(filtered_files)

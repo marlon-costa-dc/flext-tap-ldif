@@ -3,27 +3,29 @@
 This module implements the main tap class for LDIF file format data extraction.
 """
 
+# MIGRATED: Singer SDK imports centralized via flext-meltano
 from __future__ import annotations
 
-import logging
 from typing import TYPE_CHECKING, Any, ClassVar
 
-from singer_sdk import Tap, typing as th
+from flext_core import get_logger
+from flext_meltano import th
+from flext_meltano.singer import FlextMeltanoTap as Tap
 
 from flext_tap_ldif.config import TapLDIFConfig
 from flext_tap_ldif.streams import LDIFEntriesStream
 
 if TYPE_CHECKING:
-    from singer_sdk.streams import Stream
+    from flext_meltano import Stream
 
 
-logger = logging.getLogger(__name__)
+logger = get_logger(__name__)
 
 
 class TapLDIF(Tap):
     """Singer tap for LDIF file format data extraction."""
 
-    name = "tap-ldif"
+    name: str = "tap-ldif"
     config_class = TapLDIFConfig
 
     # Keep the jsonschema for backward compatibility
