@@ -51,7 +51,9 @@ class FlextLDIFProcessorWrapper:
         """
         logger.info(f"Processing LDIF file: {file_path}")
         try:
-            with file_path.open("r", encoding=self.config.get("encoding", "utf-8")) as file:
+            with file_path.open(
+                "r", encoding=self.config.get("encoding", "utf-8"),
+            ) as file:
                 content = file.read()
                 entries = parse_ldif(content)
 
@@ -60,13 +62,15 @@ class FlextLDIFProcessorWrapper:
                     yield {
                         "dn": str(entry.dn),
                         "attributes": entry.attributes.attributes,
-                        "object_class": entry.attributes.attributes.get("objectClass", []),
+                        "object_class": entry.attributes.attributes.get(
+                            "objectClass", [],
+                        ),
                         "change_type": None,  # Change records not supported in simple parse
                         "source_file": str(file_path),
                         "line_number": 0,  # Line numbers not available in simplified parse
                         "entry_size": len(str(entry).encode("utf-8")),
                     }
-        except Exception:
+        except (RuntimeError, ValueError, TypeError):
             logger.exception(f"Failed to process LDIF file: {file_path}")
             if self.config.get("strict_parsing", True):
                 raise

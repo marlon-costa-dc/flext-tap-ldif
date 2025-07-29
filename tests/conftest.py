@@ -396,7 +396,7 @@ def pytest_configure(config: pytest.Config) -> None:
 
 # Mock services
 @pytest.fixture
-def mock_ldif_tap() -> Any:
+def mock_ldif_tap() -> object:
     """Mock LDIF tap for testing."""
 
     class MockLDIFTap:
@@ -423,7 +423,7 @@ def mock_ldif_tap() -> Any:
 
 
 @pytest.fixture
-def mock_ldif_parser() -> Any:
+def mock_ldif_parser() -> object:
     """Mock LDIF parser for testing."""
 
     class MockLDIFParser:

@@ -95,7 +95,7 @@ class LDIFEntriesStream(Stream):
             try:
                 # Process the LDIF file and yield records
                 yield from self._processor.process_file(file_path)
-            except Exception as e:
+            except (RuntimeError, ValueError, TypeError) as e:
                 if config.get("strict_parsing", True):
                     logger.exception(f"Error processing file {file_path}")
                     raise
@@ -142,7 +142,7 @@ class LDIFEntriesStream(Stream):
                 else:
                     logger.warning(
                         f"Skipping file {file_path} - size {file_path.stat().st_size} bytes "
-                        f"exceeds limit of {max_size_bytes} bytes"
+                        f"exceeds limit of {max_size_bytes} bytes",
                     )
             except OSError as e:
                 logger.warning(f"Could not check size for file {file_path}: {e}")

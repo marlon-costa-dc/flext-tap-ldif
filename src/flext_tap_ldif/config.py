@@ -2,7 +2,6 @@
 
 from __future__ import annotations
 
-from pathlib import Path
 from typing import Any
 
 # MIGRATED: Singer SDK imports centralized via flext-meltano
@@ -92,7 +91,7 @@ class TapLDIFConfig(BaseModel):
         """Use consolidated directory path validation."""
         return validate_directory_path(v)
 
-    def model_post_init(self, __context: Any, /) -> None:
+    def model_post_init(self, __context: object, /) -> None:
         """Validate configuration after initialization."""
         super().model_post_init(__context)
 
