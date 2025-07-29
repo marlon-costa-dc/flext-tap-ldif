@@ -1,13 +1,13 @@
-"""FLEXT Tap LDIF - Wrapper for flext-meltano consolidated implementation.
+"""FLEXT Tap LDIF - Singer Tap for LDIF file format data extraction.
 
-CONSOLIDATION: This project is now a library wrapper that imports the real
-Singer/Meltano/DBT consolidated implementations from flext-meltano to eliminate
-code duplication across the FLEXT ecosystem.
+This project implements a Singer tap for extracting data from LDIF (LDAP Data
+Interchange Format) files, using flext-meltano interfaces and flext-ldif for
+processing logic.
 
-This follows the architectural principle:
-- flext-* projects are LIBRARIES, not services
-- tap/target/dbt/ext are Meltano plugins
-- Real implementations are in flext-meltano
+Architecture:
+- Uses generic Tap/Stream interfaces from flext-meltano
+- Uses real LDIF processing logic from flext-ldif
+- Follows flext-core patterns for error handling and logging
 
 Copyright (c) 2025 FLEXT Team. All rights reserved.
 SPDX-License-Identifier: MIT
@@ -15,9 +15,9 @@ SPDX-License-Identifier: MIT
 
 from __future__ import annotations
 
-# Import consolidated implementations from flext-meltano
-# MIGRATED: Singer SDK imports centralized via flext-meltano
-from flext_meltano.taps.ldif import TapLDIF, TapLDIFConfig
+# Import local implementations
+from flext_tap_ldif.config import TapLDIFConfig
+from flext_tap_ldif.tap import TapLDIF
 
 # Backward compatibility aliases
 FlextTapLDIF = TapLDIF

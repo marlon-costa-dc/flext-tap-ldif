@@ -9,8 +9,7 @@ from __future__ import annotations
 from typing import TYPE_CHECKING, Any, ClassVar
 
 from flext_core import get_logger
-from flext_meltano import th
-from flext_meltano.singer import FlextMeltanoTap as Tap
+from flext_meltano import Tap, singer_typing as th
 
 from flext_tap_ldif.config import TapLDIFConfig
 from flext_tap_ldif.streams import LDIFEntriesStream
@@ -106,11 +105,7 @@ class TapLDIF(Tap):
 
         """
         return [
-            LDIFEntriesStream(
-                tap=self,
-                name="ldif_entries",
-                schema=self._get_ldif_entries_schema(),
-            ),
+            LDIFEntriesStream(tap=self),
         ]
 
     def _get_ldif_entries_schema(self) -> dict[str, Any]:

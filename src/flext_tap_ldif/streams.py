@@ -11,14 +11,12 @@ from flext_core import get_logger
 if TYPE_CHECKING:
     from collections.abc import Mapping
 
-from flext_meltano import Stream, th
+from flext_meltano import Stream, Tap, singer_typing as th
 
 from flext_tap_ldif.ldif_processor import FlextLDIFProcessorWrapper
 
 if TYPE_CHECKING:
     from collections.abc import Iterable
-
-    from flext_meltano.singer import FlextMeltanoTap as Tap
 
 logger = get_logger(__name__)
 
@@ -53,21 +51,14 @@ class LDIFEntriesStream(Stream):
         th.Property("entry_size", th.IntegerType, description="Size of entry in bytes"),
     ).to_dict()
 
-    def __init__(
-        self,
-        tap: Tap,
-        name: str | None = None,
-        schema: dict[str, Any] | None = None,
-    ) -> None:
+    def __init__(self, tap: Tap) -> None:
         """Initialize the LDIF entries stream.
 
         Args:
             tap: The parent tap instance.
-            name: The stream name.
-            schema: The stream schema.
 
         """
-        super().__init__(tap, schema, name)
+        super().__init__(tap, name=self.name, schema=self.schema)
         self._processor = FlextLDIFProcessorWrapper(dict(tap.config))
 
     def get_records(

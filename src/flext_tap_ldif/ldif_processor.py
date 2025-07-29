@@ -12,7 +12,7 @@ from __future__ import annotations
 from typing import TYPE_CHECKING, Any
 
 from flext_core import get_logger
-from flext_ldif import FlextLdifProcessor, parse_ldif
+from flext_ldif import FlextLdifAPI, flext_ldif_get_api
 
 if TYPE_CHECKING:
     from collections.abc import Generator
@@ -21,7 +21,7 @@ if TYPE_CHECKING:
 logger = get_logger(__name__)
 
 # Use flext-ldif processor instead of reimplementing LDIF functionality
-LDIFProcessor = FlextLdifProcessor
+LDIFProcessor = FlextLdifAPI
 
 # Backward compatibility alias removed (causes self-assignment warning)
 
@@ -37,7 +37,7 @@ class FlextLDIFProcessorWrapper:
 
         """
         self.config = config
-        self._processor = FlextLdifProcessor()
+        self._api = flext_ldif_get_api()
 
     def process_file(self, file_path: Path) -> Generator[dict[str, Any]]:
         """Process a single LDIF file and yield records using flext-ldif.
@@ -55,7 +55,15 @@ class FlextLDIFProcessorWrapper:
                 "r", encoding=self.config.get("encoding", "utf-8"),
             ) as file:
                 content = file.read()
-                entries = parse_ldif(content)
+                parse_result = self._api.parse(content)
+                if not parse_result.is_success:
+                    msg = f"Failed to parse LDIF: {parse_result.error}"
+                    raise ValueError(msg)
+                entries = parse_result.data
+
+                if entries is None:
+                    logger.warning(f"No entries found in file: {file_path}")
+                    return
 
                 for entry in entries:
                     # Convert FlextLdifEntry to expected dictionary format
