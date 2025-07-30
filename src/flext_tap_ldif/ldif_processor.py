@@ -52,7 +52,8 @@ class FlextLDIFProcessorWrapper:
         logger.info(f"Processing LDIF file: {file_path}")
         try:
             with file_path.open(
-                "r", encoding=self.config.get("encoding", "utf-8"),
+                "r",
+                encoding=self.config.get("encoding", "utf-8"),
             ) as file:
                 content = file.read()
                 parse_result = self._api.parse(content)
@@ -71,7 +72,8 @@ class FlextLDIFProcessorWrapper:
                         "dn": str(entry.dn),
                         "attributes": entry.attributes.attributes,
                         "object_class": entry.attributes.attributes.get(
-                            "objectClass", [],
+                            "objectClass",
+                            [],
                         ),
                         "change_type": None,  # Change records not supported in simple parse
                         "source_file": str(file_path),

@@ -25,7 +25,7 @@ FlextTapLDIFConfig = TapLDIFConfig
 LDIFTap = TapLDIF
 TapConfig = TapLDIFConfig
 
-__version__ = "0.8.0-wrapper"
+__version__ = "0.9.0-wrapper"
 
 __all__ = [
     # Backward compatibility

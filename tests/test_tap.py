@@ -18,7 +18,8 @@ def test_discover_streams() -> None:
         tap = TapLDIF(config=config)
         streams = tap.discover_streams()
         if len(streams) != 1:
-            raise AssertionError(f"Expected {1}, got {len(streams)}")
+            msg = f"Expected {1}, got {len(streams)}"
+            raise AssertionError(msg)
         assert streams[0].name == "ldif_entries"
         # Clean up
         Path(tmp_file.name).unlink(missing_ok=True)

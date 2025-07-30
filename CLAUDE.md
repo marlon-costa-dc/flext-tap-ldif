@@ -19,8 +19,9 @@ This is **flext-tap-ldif**, a Singer SDK tap for extracting data from LDIF (LDAP
 ### Dependencies
 
 The project follows FLEXT ecosystem patterns and depends on:
+
 - **flext-core**: Base patterns, logging, result handling, dependency injection
-- **flext-meltano**: Singer SDK integration and Meltano orchestration 
+- **flext-meltano**: Singer SDK integration and Meltano orchestration
 - **flext-ldif**: LDIF parsing and processing infrastructure
 - **flext-observability**: Monitoring and metrics
 
@@ -35,12 +36,14 @@ The project follows FLEXT ecosystem patterns and depends on:
 ## Development Commands
 
 ### Quality Gates (Always run before committing)
+
 ```bash
 make validate          # Complete validation (lint + type + security + test)
 make check            # Quick health check (lint + type-check)
 ```
 
 ### Individual Quality Checks
+
 ```bash
 make lint             # Ruff linting with ALL rules enabled
 make type-check       # MyPy strict type checking
@@ -50,16 +53,18 @@ make test             # Run tests with 90% coverage requirement
 ```
 
 ### Testing
+
 ```bash
 make test             # All tests with coverage
 make test-unit        # Unit tests only (-m "not integration")
-make test-integration # Integration tests only (-m integration)  
+make test-integration # Integration tests only (-m integration)
 make test-singer      # Singer protocol tests (-m singer)
 make test-fast        # Tests without coverage report
 make coverage-html    # Generate HTML coverage report
 ```
 
 ### Singer Tap Operations
+
 ```bash
 make discover         # Run tap discovery mode (--discover)
 make run              # Run tap extraction (--config --catalog --state)
@@ -69,6 +74,7 @@ make sync             # Alias for run
 ```
 
 ### LDIF-Specific Operations
+
 ```bash
 make ldif-validate    # Validate LDIF file format
 make ldif-parse       # Test LDIF parsing functionality
@@ -76,6 +82,7 @@ make ldif-test        # Run comprehensive LDIF tests
 ```
 
 ### Build & Distribution
+
 ```bash
 make build            # Build distribution packages with Poetry
 
@@ -124,6 +131,7 @@ make setup            # Complete project setup (install-dev + pre-commit)
 ```
 
 ### Development Tools
+
 ```bash
 make shell            # Python shell with project loaded
 make pre-commit       # Run pre-commit hooks manually
@@ -136,11 +144,13 @@ make clean            # Clean build artifacts and cache
 The tap accepts configuration through JSON files or environment variables:
 
 ### Required Configuration
+
 - **file_path**: Path to single LDIF file, OR
-- **directory_path** + **file_pattern**: Directory with LDIF file pattern, OR  
+- **directory_path** + **file_pattern**: Directory with LDIF file pattern, OR
 - **file_pattern**: Pattern in current directory
 
 ### Optional Configuration
+
 - **base_dn_filter**: Filter entries by base DN pattern
 - **object_class_filter**: Array of object classes to include
 - **attribute_filter**: Array of attributes to include
@@ -154,16 +164,19 @@ The tap accepts configuration through JSON files or environment variables:
 ## Testing Strategy
 
 ### Test Organization
+
 - **Unit Tests**: Core functionality without external dependencies
 - **Integration Tests**: File processing and Singer protocol integration
 - **Singer Tests**: Singer SDK compliance and protocol validation
 
 ### Coverage Requirements
+
 - Minimum 90% test coverage enforced
 - pytest with comprehensive test configuration
 - HTML and XML coverage reports generated
 
 ### Test Execution
+
 ```bash
 # Run specific test types
 pytest -m unit              # Unit tests only
@@ -178,18 +191,21 @@ pytest tests/test_tap.py::test_discover_streams -v
 ## Code Quality Standards
 
 ### Linting & Formatting
+
 - **Ruff**: ALL rules enabled with specific ignores in pyproject.toml
 - **Black**: Code formatting (delegated to ruff format)
 - **MyPy**: Strict type checking with no untyped code allowed
 - **Bandit**: Security scanning with exclusions for test files
 
 ### Type Safety
+
 - Python 3.13+ with strict type hints required
 - Pydantic models for configuration validation
 - TYPE_CHECKING imports for runtime optimization
 - No `Any` types without justification
 
 ### Security
+
 - pip-audit for dependency vulnerability scanning
 - Bandit security linting
 - No secrets or sensitive data in code
@@ -201,7 +217,7 @@ pytest tests/test_tap.py::test_discover_streams -v
 src/flext_tap_ldif/
 ├── __init__.py           # Package initialization
 ├── tap.py               # Main TapLDIF class
-├── streams.py           # LDIFEntriesStream implementation  
+├── streams.py           # LDIFEntriesStream implementation
 ├── config.py            # TapLDIFConfig with validation
 ├── ldif_processor.py    # Wrapper for flext-ldif integration
 ├── exceptions.py        # Domain-specific exception hierarchy
@@ -215,24 +231,28 @@ tests/
 ## Common Issues & Solutions
 
 ### LDIF Processing Errors
+
 - Check file encoding (default: utf-8)
 - Verify LDIF file format compliance
 - Use `strict_parsing=false` for lenient parsing
 - Check file size limits (max_file_size_mb)
 
-### Singer Protocol Issues  
+### Singer Protocol Issues
+
 - Ensure configuration validation passes
 - Run discovery mode before extraction
 - Verify catalog and state file formats
 - Check schema compatibility
 
 ### Type Check Failures
+
 - All functions must have type hints
 - Use `from __future__ import annotations` for forward references
 - Import types under `TYPE_CHECKING` for runtime optimization
 - No untyped function definitions allowed
 
 ### Dependency Issues
+
 - Use Poetry for dependency management
 - Dependencies are path-based within FLEXT ecosystem
 - Run `poetry install --with dev,test` for full development setup
@@ -241,12 +261,14 @@ tests/
 ## Integration Points
 
 ### FLEXT Ecosystem Integration
+
 - Uses flext-core for logging, exceptions, and base patterns
 - Integrates with flext-ldif for LDIF processing functionality
 - Compatible with flext-meltano for Singer orchestration
 - Follows flext-observability patterns for monitoring
 
 ### Singer Ecosystem
+
 - Implements Singer SDK tap interface via flext-meltano
 - Supports standard Singer discovery and extraction modes
 - Compatible with Meltano orchestration platform
