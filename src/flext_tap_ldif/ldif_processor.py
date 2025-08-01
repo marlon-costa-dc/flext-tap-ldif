@@ -29,7 +29,7 @@ LDIFProcessor = FlextLdifAPI
 class FlextLDIFProcessorWrapper:
     """Wrapper for FlextLDIFProcessor to maintain API compatibility."""
 
-    def __init__(self, config: dict[str, Any]) -> None:
+    def __init__(self, config: dict[str, object]) -> None:
         """Initialize the LDIF processor using flext-ldif infrastructure.
 
         Args:
@@ -39,7 +39,7 @@ class FlextLDIFProcessorWrapper:
         self.config = config
         self._api = flext_ldif_get_api()
 
-    def process_file(self, file_path: Path) -> Generator[dict[str, Any]]:
+    def process_file(self, file_path: Path) -> Generator[dict[str, object]]:
         """Process a single LDIF file and yield records using flext-ldif.
 
         Args:

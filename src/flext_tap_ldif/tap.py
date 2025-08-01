@@ -29,7 +29,7 @@ class TapLDIF(Tap):
     config_class = TapLDIFConfig
 
     # REAL DRY: Use centralized file-based schema from flext-meltano instead of duplicating
-    config_jsonschema: ClassVar[dict[str, Any]] = create_file_tap_schema(
+    config_jsonschema: ClassVar[dict[str, object]] = create_file_tap_schema(
         # LDIF-specific additional properties for tap-ldif
         additional_properties=th.PropertiesList(
             th.Property(
@@ -84,7 +84,7 @@ class TapLDIF(Tap):
             LDIFEntriesStream(tap=self),
         ]
 
-    def _get_ldif_entries_schema(self) -> dict[str, Any]:
+    def _get_ldif_entries_schema(self) -> dict[str, object]:
         """Get the schema for LDIF entries stream.
 
         Returns:

@@ -101,7 +101,7 @@ class TapLDIFConfig(BaseModel):
             raise ValueError(msg)
 
     @property
-    def ldif_config(self) -> dict[str, Any]:
+    def ldif_config(self) -> dict[str, object]:
         """Get LDIF-specific configuration as a dictionary."""
         return {
             "file_path": self.file_path,

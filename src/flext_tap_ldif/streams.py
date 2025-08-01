@@ -63,8 +63,8 @@ class LDIFEntriesStream(Stream):
 
     def get_records(
         self,
-        context: Mapping[str, Any] | None = None,
-    ) -> Iterable[dict[str, Any]]:
+        context: Mapping[str, object] | None = None,
+    ) -> Iterable[dict[str, object]]:
         """Return a generator of record-type dictionary objects.
 
         Args:
