@@ -1,106 +1,44 @@
-"""LDIF tap exception hierarchy using flext-core patterns.
+"""LDIF tap exception hierarchy using flext-core DRY patterns.
 
 Copyright (c) 2025 FLEXT Contributors
 SPDX-License-Identifier: MIT
 
-Domain-specific exceptions for LDIF tap operations inheriting from flext-core.
+Domain-specific exceptions using factory pattern to eliminate duplication.
 """
 
 from __future__ import annotations
 
-from flext_core.exceptions import (
-    FlextConfigurationError,
-    FlextError,
-    FlextProcessingError,
-    FlextValidationError,
-)
+from typing import TYPE_CHECKING
 
+from flext_core.exceptions import FlextProcessingError, create_module_exception_classes
 
-class FlextTapLdifError(FlextError):
-    """Base exception for LDIF tap operations."""
+if TYPE_CHECKING:
+    # For type checking, import the actual base types
+    from flext_core.exceptions import (
+        FlextAuthenticationError as FlextTapLdifAuthenticationError,
+        FlextConfigurationError as FlextTapLdifConfigurationError,
+        FlextConnectionError as FlextTapLdifConnectionError,
+        FlextError as FlextTapLdifError,
+        FlextProcessingError as FlextTapLdifProcessingError,
+        FlextTimeoutError as FlextTapLdifTimeoutError,
+        FlextValidationError as FlextTapLdifValidationError,
+    )
+else:
+    # Create all standard exception classes using factory pattern - eliminates 120+ lines of duplication
+    ldif_exceptions = create_module_exception_classes("flext_tap_ldif")
 
-    def __init__(
-        self,
-        message: str = "LDIF tap error",
-        file_path: str | None = None,
-        **kwargs: object,
-    ) -> None:
-        """Initialize LDIF tap error with context."""
-        context = kwargs.copy()
-        if file_path is not None:
-            context["file_path"] = file_path
-
-        super().__init__(message, error_code="LDIF_TAP_ERROR", context=context)
-
-
-class FlextTapLdifValidationError(FlextValidationError):
-    """LDIF tap validation errors."""
-
-    def __init__(
-        self,
-        message: str = "LDIF tap validation failed",
-        field: str | None = None,
-        value: object = None,
-        line_number: int | None = None,
-        **kwargs: object,
-    ) -> None:
-        """Initialize LDIF tap validation error with context."""
-        validation_details = {}
-        if field is not None:
-            validation_details["field"] = field
-        if value is not None:
-            validation_details["value"] = str(value)[:100]  # Truncate long values
-
-        context = kwargs.copy()
-        if line_number is not None:
-            context["line_number"] = line_number
-
-        super().__init__(
-            f"LDIF tap validation: {message}",
-            validation_details=validation_details,
-            context=context,
-        )
-
-
-class FlextTapLdifConfigurationError(FlextConfigurationError):
-    """LDIF tap configuration errors."""
-
-    def __init__(
-        self,
-        message: str = "LDIF tap configuration error",
-        config_key: str | None = None,
-        **kwargs: object,
-    ) -> None:
-        """Initialize LDIF tap configuration error with context."""
-        context = kwargs.copy()
-        if config_key is not None:
-            context["config_key"] = config_key
-
-        super().__init__(f"LDIF tap config: {message}", **context)
-
-
-class FlextTapLdifProcessingError(FlextProcessingError):
-    """LDIF tap processing errors."""
-
-    def __init__(
-        self,
-        message: str = "LDIF tap processing failed",
-        file_path: str | None = None,
-        line_number: int | None = None,
-        **kwargs: object,
-    ) -> None:
-        """Initialize LDIF tap processing error with context."""
-        context = kwargs.copy()
-        if file_path is not None:
-            context["file_path"] = file_path
-        if line_number is not None:
-            context["line_number"] = line_number
-
-        super().__init__(f"LDIF tap processing: {message}", **context)
+    # Import generated classes for clean usage
+    FlextTapLdifError = ldif_exceptions["FlextTapLdifError"]
+    FlextTapLdifValidationError = ldif_exceptions["FlextTapLdifValidationError"]
+    FlextTapLdifConfigurationError = ldif_exceptions["FlextTapLdifConfigurationError"]
+    FlextTapLdifConnectionError = ldif_exceptions["FlextTapLdifConnectionError"]
+    FlextTapLdifProcessingError = ldif_exceptions["FlextTapLdifProcessingError"]
+    FlextTapLdifAuthenticationError = ldif_exceptions["FlextTapLdifAuthenticationError"]
+    FlextTapLdifTimeoutError = ldif_exceptions["FlextTapLdifTimeoutError"]
 
 
 class FlextTapLdifParseError(FlextProcessingError):
-    """LDIF tap parsing errors."""
+    """LDIF tap parsing errors with LDIF-specific context."""
 
     def __init__(
         self,
@@ -110,7 +48,7 @@ class FlextTapLdifParseError(FlextProcessingError):
         entry_dn: str | None = None,
         **kwargs: object,
     ) -> None:
-        """Initialize LDIF tap parse error with context."""
+        """Initialize LDIF tap parse error with LDIF-specific context."""
         context = kwargs.copy()
         if file_path is not None:
             context["file_path"] = file_path
@@ -123,7 +61,7 @@ class FlextTapLdifParseError(FlextProcessingError):
 
 
 class FlextTapLdifFileError(FlextTapLdifError):
-    """LDIF tap file operation errors."""
+    """LDIF tap file operation errors with file-specific context."""
 
     def __init__(
         self,
@@ -132,18 +70,18 @@ class FlextTapLdifFileError(FlextTapLdifError):
         operation: str | None = None,
         **kwargs: object,
     ) -> None:
-        """Initialize LDIF tap file error with context."""
+        """Initialize LDIF tap file error with file-specific context."""
         context = kwargs.copy()
         if file_path is not None:
             context["file_path"] = file_path
         if operation is not None:
             context["operation"] = operation
 
-        super().__init__(f"LDIF tap file: {message}", **context)
+        super().__init__(f"LDIF tap file: {message}", context=context)
 
 
 class FlextTapLdifStreamError(FlextTapLdifError):
-    """LDIF tap stream processing errors."""
+    """LDIF tap stream processing errors with stream-specific context."""
 
     def __init__(
         self,
@@ -152,14 +90,14 @@ class FlextTapLdifStreamError(FlextTapLdifError):
         file_path: str | None = None,
         **kwargs: object,
     ) -> None:
-        """Initialize LDIF tap stream error with context."""
+        """Initialize LDIF tap stream error with stream-specific context."""
         context = kwargs.copy()
         if stream_name is not None:
             context["stream_name"] = stream_name
         if file_path is not None:
             context["file_path"] = file_path
 
-        super().__init__(f"LDIF tap stream: {message}", **context)
+        super().__init__(f"LDIF tap stream: {message}", context=context)
 
 
 __all__ = [

@@ -10,6 +10,7 @@ from typing import TYPE_CHECKING, Any, ClassVar
 
 from flext_core import get_logger
 from flext_meltano import Tap, singer_typing as th
+from flext_meltano.common_schemas import create_file_tap_schema
 
 from flext_tap_ldif.config import TapLDIFConfig
 from flext_tap_ldif.streams import LDIFEntriesStream
@@ -27,74 +28,49 @@ class TapLDIF(Tap):
     name: str = "tap-ldif"
     config_class = TapLDIFConfig
 
-    # Keep the jsonschema for backward compatibility
-    config_jsonschema: ClassVar[dict[str, Any]] = th.PropertiesList(
-        th.Property(
-            "file_path",
-            th.StringType,
-            required=True,
-            description="Path to the LDIF file to extract data from",
-        ),
-        th.Property(
-            "file_pattern",
-            th.StringType,
-            description="Pattern for multiple LDIF files (e.g., '*.ldif')",
-        ),
-        th.Property(
-            "directory_path",
-            th.StringType,
-            description="Directory containing LDIF files",
-        ),
-        th.Property(
-            "base_dn_filter",
-            th.StringType,
-            description="Filter entries by base DN pattern",
-        ),
-        th.Property(
-            "object_class_filter",
-            th.ArrayType(th.StringType),
-            description="Filter entries by object class",
-        ),
-        th.Property(
-            "attribute_filter",
-            th.ArrayType(th.StringType),
-            description="Include only specified attributes",
-        ),
-        th.Property(
-            "exclude_attributes",
-            th.ArrayType(th.StringType),
-            description="Exclude specified attributes",
-        ),
-        th.Property(
-            "encoding",
-            th.StringType,
-            default="utf-8",
-            description="File encoding (default: utf-8)",
-        ),
-        th.Property(
-            "batch_size",
-            th.IntegerType,
-            default=1000,
-            description="Number of entries to process in each batch",
-        ),
-        th.Property(
-            "include_operational_attributes",
-            th.BooleanType,
-            default=False,
-            description="Include operational attributes in output",
-        ),
-        th.Property(
-            "strict_parsing",
-            th.BooleanType,
-            default=True,
-            description="Enable strict LDIF parsing (fail on errors)",
-        ),
-        th.Property(
-            "max_file_size_mb",
-            th.IntegerType,
-            default=100,
-            description="Maximum file size in MB to process",
-        ),
+    # REAL DRY: Use centralized file-based schema from flext-meltano instead of duplicating
+    config_jsonschema: ClassVar[dict[str, Any]] = create_file_tap_schema(
+        # LDIF-specific additional properties for tap-ldif
+        additional_properties=th.PropertiesList(
+            th.Property(
+                "base_dn_filter",
+                th.StringType,
+                description="Filter entries by base DN pattern",
+            ),
+            th.Property(
+                "object_class_filter",
+                th.ArrayType(th.StringType),
+                description="Filter entries by object class",
+            ),
+            th.Property(
+                "attribute_filter",
+                th.ArrayType(th.StringType),
+                description="Include only specified attributes",
+            ),
+            th.Property(
+                "exclude_attributes",
+                th.ArrayType(th.StringType),
+                description="Exclude specified attributes",
+            ),
+            th.Property(
+                "include_operational_attributes",
+                th.BooleanType,
+                default=False,
+                description="Include operational attributes in output",
+            ),
+            th.Property(
+                "strict_parsing",
+                th.BooleanType,
+                default=True,
+                description="Enable strict LDIF parsing (fail on errors)",
+            ),
+            th.Property(
+                "max_file_size_mb",
+                th.IntegerType,
+                default=100,
+                description="Maximum file size in MB to process",
+            ),
+        )
     ).to_dict()
 
     def discover_streams(self) -> list[Stream]:
