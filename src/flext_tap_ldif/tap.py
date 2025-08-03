@@ -6,7 +6,7 @@ This module implements the main tap class for LDIF file format data extraction.
 # MIGRATED: Singer SDK imports centralized via flext-meltano
 from __future__ import annotations
 
-from typing import TYPE_CHECKING, Any, ClassVar
+from typing import TYPE_CHECKING, ClassVar
 
 from flext_core import get_logger
 from flext_meltano import Tap, singer_typing as th
@@ -70,7 +70,7 @@ class TapLDIF(Tap):
                 default=100,
                 description="Maximum file size in MB to process",
             ),
-        )
+        ),
     ).to_dict()
 
     def discover_streams(self) -> list[Stream]:

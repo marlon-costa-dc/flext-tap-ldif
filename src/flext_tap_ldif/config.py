@@ -2,8 +2,6 @@
 
 from __future__ import annotations
 
-from typing import Any
-
 # MIGRATED: Singer SDK imports centralized via flext-meltano
 from flext_meltano.common import validate_directory_path, validate_file_path
 from pydantic import BaseModel, Field, field_validator
