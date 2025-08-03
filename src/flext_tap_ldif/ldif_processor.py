@@ -60,7 +60,9 @@ class FlextLDIFProcessorWrapper:
 
             with file_path.open("r", encoding=encoding) as file:
                 content = file.read()
-                parse_result = cast("FlextResult[list[FlextLdifEntry]]", self._api.parse(content))
+                parse_result = cast(
+                    "FlextResult[list[FlextLdifEntry]]", self._api.parse(content)
+                )
                 if not parse_result.is_success:
                     msg = f"Failed to parse LDIF: {parse_result.error}"
                     raise ValueError(msg)
