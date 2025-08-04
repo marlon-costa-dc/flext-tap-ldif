@@ -100,7 +100,7 @@ class FlextTapLdifStreamError(FlextTapLdifError):
         super().__init__(f"LDIF tap stream: {message}", context=context)
 
 
-__all__ = [
+__all__: list[str] = [
     "FlextTapLdifConfigurationError",
     "FlextTapLdifError",
     "FlextTapLdifFileError",

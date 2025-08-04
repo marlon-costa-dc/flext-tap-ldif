@@ -18,7 +18,7 @@ def test_discover_streams() -> None:
         tap = TapLDIF(config=config)
         streams = tap.discover_streams()
         if len(streams) != 1:
-            msg = f"Expected {1}, got {len(streams)}"
+            msg: str = f"Expected {1}, got {len(streams)}"
             raise AssertionError(msg)
         assert streams[0].name == "ldif_entries"
         # Clean up
