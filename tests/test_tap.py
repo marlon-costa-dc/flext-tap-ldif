@@ -7,7 +7,6 @@ from pathlib import Path
 
 # MIGRATED: from singer_sdk.testing import get_tap_test_class -> use flext_meltano
 from flext_meltano import get_tap_test_class
-
 from flext_tap_ldif.tap import TapLDIF
 
 
