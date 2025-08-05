@@ -57,8 +57,11 @@ Documentation = "https://github.com/flext-sh/flext/blob/main/README.md"
 tap-ldif = "flext_tap_ldif.tap:main"
 flext-tap-ldif = "flext_tap_ldif.tap:main"
 
+[tool.ruff]
 extend = "../.ruff-shared.toml"
-lint.isort.known-first-party = ["flext_tap_ldif"]
+
+[tool.ruff.lint.isort]
+known-first-party = ["flext_tap_ldif"]
 
 [tool.mypy]
 python_version = "3.13"

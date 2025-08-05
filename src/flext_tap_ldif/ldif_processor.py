@@ -9,16 +9,15 @@ implementation from flext-ldif project.
 
 from __future__ import annotations
 
-from typing import TYPE_CHECKING, cast
+from typing import TYPE_CHECKING
 
-from flext_core import FlextResult, get_logger
+from flext_core import get_logger
 from flext_ldif import FlextLdifAPI, flext_ldif_get_api
 
 if TYPE_CHECKING:
     from collections.abc import Generator
     from pathlib import Path
 
-    from flext_ldif import FlextLdifEntry
 
 logger = get_logger(__name__)
 
@@ -60,10 +59,7 @@ class FlextLDIFProcessorWrapper:
 
             with file_path.open("r", encoding=encoding) as file:
                 content = file.read()
-                parse_result = cast(
-                    "FlextResult[list[FlextLdifEntry]]",
-                    self._api.parse(content),
-                )
+                parse_result = self._api.parse(content)
                 if not parse_result.success:
                     msg: str = f"Failed to parse LDIF: {parse_result.error}"
                     raise ValueError(msg)
