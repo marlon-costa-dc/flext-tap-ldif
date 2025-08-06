@@ -54,7 +54,7 @@ class FlextLDIFProcessorWrapper:
             Dictionary records representing LDIF entries.
 
         """
-        logger.info(f"Processing LDIF file: {file_path}")
+        logger.info("Processing LDIF file: %s", file_path)
         try:
             # Ensure encoding is properly typed
             encoding = self.config.get("encoding", "utf-8")
@@ -70,7 +70,7 @@ class FlextLDIFProcessorWrapper:
                 entries = parse_result.data
 
                 if entries is None:
-                    logger.warning(f"No entries found in file: {file_path}")
+                    logger.warning("No entries found in file: %s", file_path)
                     return
 
                 for entry in entries:
@@ -88,7 +88,7 @@ class FlextLDIFProcessorWrapper:
                         "entry_size": len(str(entry).encode("utf-8")),
                     }
         except (RuntimeError, ValueError, TypeError):
-            logger.exception(f"Failed to process LDIF file: {file_path}")
+            logger.exception("Failed to process LDIF file: %s", file_path)
             if self.config.get("strict_parsing", True):
                 raise
 

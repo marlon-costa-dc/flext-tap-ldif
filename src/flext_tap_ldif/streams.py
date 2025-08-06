@@ -79,19 +79,19 @@ class LDIFEntriesStream(Stream):
         # Determine input files to process
         files_to_process = self._get_input_files()
 
-        logger.info(f"Processing {len(files_to_process)} LDIF files")
+        logger.info("Processing %d LDIF files", len(files_to_process))
 
         for file_path in files_to_process:
-            logger.info(f"Processing file: {file_path}")
+            logger.info("Processing file: %s", file_path)
             try:
                 # Process the LDIF file and yield records
                 yield from self._processor.process_file(file_path)
             except (RuntimeError, ValueError, TypeError) as e:
                 if config.get("strict_parsing", True):
-                    logger.exception(f"Error processing file {file_path}")
+                    logger.exception("Error processing file %s", file_path)
                     raise
                 else:
-                    logger.warning(f"Skipping file {file_path} due to error: {e}")
+                    logger.warning("Skipping file %s due to error: %s", file_path, e)
                     continue
 
     def _get_input_files(self) -> list[Path]:
@@ -132,10 +132,10 @@ class LDIFEntriesStream(Stream):
                     filtered_files.append(file_path)
                 else:
                     logger.warning(
-                        f"Skipping file {file_path} - size {file_path.stat().st_size} bytes "
-                        f"exceeds limit of {max_size_bytes} bytes",
+                        "Skipping file %s - size %d bytes exceeds limit of %d bytes",
+                        file_path, file_path.stat().st_size, max_size_bytes,
                     )
             except OSError as e:
-                logger.warning(f"Could not check size for file {file_path}: {e}")
+                logger.warning("Could not check size for file %s: %s", file_path, e)
 
         return sorted(filtered_files)

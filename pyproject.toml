@@ -31,10 +31,10 @@ classifiers = [
     "Topic :: System :: Archiving",
 ]
 dependencies = [
-    "flext-core @ ../flext-core",
-    "flext-meltano @ ../flext-meltano",
-    "flext-ldif @ ../flext-ldif",
-    "flext-observability @ ../flext-observability",
+    "flext-core",
+    "flext-meltano",
+    "flext-ldif",
+    "flext-observability",
     "pydantic>=2.11.7",
 ]
 [[project.authors]]
@@ -168,7 +168,17 @@ pydantic = ">=2.11.7"
 path = "../flext-core"
 develop = true
 
-# Remove flext-observability - not used in this project
+[tool.poetry.dependencies.flext-meltano]
+path = "../flext-meltano"
+develop = true
+
+[tool.poetry.dependencies.flext-ldif]
+path = "../flext-ldif"
+develop = true
+
+[tool.poetry.dependencies.flext-observability]
+path = "../flext-observability"
+develop = true
 
 [tool.poetry.group.dev.dependencies]
 ruff = ">=0.12.3"
