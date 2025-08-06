@@ -9,7 +9,7 @@ implementation from flext-ldif project.
 
 from __future__ import annotations
 
-from typing import TYPE_CHECKING
+from typing import TYPE_CHECKING, NoReturn
 
 from flext_core import get_logger
 from flext_ldif import FlextLdifAPI, flext_ldif_get_api
@@ -40,6 +40,10 @@ class FlextLDIFProcessorWrapper:
         self.config = config
         self._api = flext_ldif_get_api()
 
+    def _raise_parse_error(self, msg: str) -> NoReturn:
+        """Raise parse error with message."""
+        raise ValueError(msg)
+
     def process_file(self, file_path: Path) -> Generator[dict[str, object]]:
         """Process a single LDIF file and yield records using flext-ldif.
 
@@ -62,7 +66,7 @@ class FlextLDIFProcessorWrapper:
                 parse_result = self._api.parse(content)
                 if not parse_result.success:
                     msg: str = f"Failed to parse LDIF: {parse_result.error}"
-                    raise ValueError(msg)
+                    self._raise_parse_error(msg)
                 entries = parse_result.data
 
                 if entries is None:
