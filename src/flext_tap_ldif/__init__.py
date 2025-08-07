@@ -37,47 +37,39 @@ from __future__ import annotations
 
 import importlib.metadata
 
+# flext-core imports
+from flext_core import FlextResult, FlextValueObject, get_logger
+
 # === FLEXT-MELTANO COMPLETE INTEGRATION ===
 # Re-export ALL flext-meltano facilities for full ecosystem integration
 from flext_meltano import (
+    BatchSink,
+    FlextMeltanoBaseService,
+    # Bridge integration
+    FlextMeltanoBridge,
+    # Configuration and validation
+    FlextMeltanoConfig,
+    FlextMeltanoEvent,
+    # RESTStream,  # Not available in flext_meltano yet
+    # Enterprise services from flext-meltano.base
+    FlextMeltanoTapService,
+    # Authentication patterns
+    OAuthAuthenticator,
+    # Typing definitions
+    PropertiesList,
+    Property,
+    Sink,
+    SQLSink,
     # Core Singer SDK classes (centralized from flext-meltano)
     Stream,
     Tap,
     Target,
-    Sink,
-    BatchSink,
-    SQLSink,
-    # RESTStream,  # Not available in flext_meltano yet
-    
-    # Enterprise services from flext-meltano.base
-    FlextMeltanoTapService,
-    FlextMeltanoBaseService,
     create_meltano_tap_service,
-    
-    # Configuration and validation
-    FlextMeltanoConfig,
-    FlextMeltanoEvent,
-    
-    # Singer typing utilities (centralized)
-    singer_typing,
-    
-    
-    # Bridge integration
-    FlextMeltanoBridge,
-    
     # Testing utilities
     get_tap_test_class,
-    
-    # Authentication patterns
-    OAuthAuthenticator,
-    
-    # Typing definitions
-    PropertiesList,
-    Property,
+    # Singer typing utilities (centralized)
+    singer_typing,
 )
-
-# flext-core imports
-from flext_core import FlextResult, FlextValueObject, get_logger
 
 # Local implementations with complete flext-meltano integration
 from flext_tap_ldif.config import TapLDIFConfig
@@ -99,56 +91,45 @@ __version_info__ = tuple(int(x) for x in __version__.split(".") if x.isdigit())
 
 # Complete public API exports
 __all__: list[str] = [
-    # === PRIMARY TAP CLASSES ===
-    "TapLDIF",
-    "TapLDIFConfig",
-    
+    "BatchSink",
+    "FlextMeltanoBaseService",
+    # Bridge integration
+    "FlextMeltanoBridge",
+    # Configuration patterns
+    "FlextMeltanoConfig",
+    "FlextMeltanoEvent",
+    # "RESTStream",  # Not available yet
+    # Enterprise services
+    "FlextMeltanoTapService",
+    # === FLEXT-CORE RE-EXPORTS ===
+    "FlextResult",
+    # === BACKWARD COMPATIBILITY ===
+    "FlextTapLDIF",
+    "FlextTapLDIFConfig",
+    "FlextValueObject",
+    "LDIFTap",
+    # Authentication
+    "OAuthAuthenticator",
+    "PropertiesList",
+    "Property",
+    "SQLSink",
+    "Sink",
     # === FLEXT-MELTANO COMPLETE RE-EXPORTS ===
     # Singer SDK core classes
     "Stream",
     "Tap",
-    "Target",
-    "Sink",
-    "BatchSink",
-    "SQLSink",
-    # "RESTStream",  # Not available yet
-    
-    # Enterprise services
-    "FlextMeltanoTapService",
-    "FlextMeltanoBaseService",
-    "create_meltano_tap_service",
-    
-    # Configuration patterns
-    "FlextMeltanoConfig",
-    "FlextMeltanoEvent",
-    
-    # Singer typing
-    "singer_typing",
-    "PropertiesList",
-    "Property",
-    
-    
-    # Bridge integration
-    "FlextMeltanoBridge",
-    
-    # Testing
-    "get_tap_test_class",
-    
-    # Authentication
-    "OAuthAuthenticator",
-    
-    # === FLEXT-CORE RE-EXPORTS ===
-    "FlextResult",
-    "FlextValueObject",
-    "get_logger",
-    
-    # === BACKWARD COMPATIBILITY ===
-    "FlextTapLDIF",
-    "FlextTapLDIFConfig",
-    "LDIFTap",
     "TapConfig",
-    
+    # === PRIMARY TAP CLASSES ===
+    "TapLDIF",
+    "TapLDIFConfig",
+    "Target",
     # === METADATA ===
     "__version__",
     "__version_info__",
+    "create_meltano_tap_service",
+    "get_logger",
+    # Testing
+    "get_tap_test_class",
+    # Singer typing
+    "singer_typing",
 ]

@@ -11,8 +11,8 @@ from __future__ import annotations
 
 from typing import TYPE_CHECKING, NoReturn
 
-from flext_core import get_logger
-from flext_ldif import FlextLdifAPI, flext_ldif_get_api
+from flext_core import FlextResult, get_logger
+from flext_ldif import FlextLdifAPI
 
 if TYPE_CHECKING:
     from collections.abc import Generator
@@ -38,11 +38,38 @@ class FlextLDIFProcessorWrapper:
 
         """
         self.config = config
-        self._api = flext_ldif_get_api()
+        self._api = FlextLdifAPI()
 
     def _raise_parse_error(self, msg: str) -> NoReturn:
         """Raise parse error with message."""
         raise ValueError(msg)
+
+    def discover_files(
+        self,
+        directory_path: str | Path | None = None,
+        file_pattern: str = "*.ldif",
+        file_path: str | Path | None = None,
+        max_file_size_mb: int = 100,
+    ) -> FlextResult[list[Path]]:
+        """Discover LDIF files using generic flext-ldif functionality.
+
+        Args:
+            directory_path: Directory to search for LDIF files
+            file_pattern: Glob pattern for file matching
+            file_path: Single file path (alternative to directory_path)
+            max_file_size_mb: Maximum file size in MB
+
+        Returns:
+            FlextResult[list[Path]]: Success with discovered files or failure with error
+
+        """
+        # Delegate to flext-ldif generic file discovery - NO local duplication
+        return self._api.discover_ldif_files(
+            directory_path=directory_path,
+            file_pattern=file_pattern,
+            file_path=file_path,
+            max_file_size_mb=max_file_size_mb,
+        )
 
     def process_file(self, file_path: Path) -> Generator[dict[str, object]]:
         """Process a single LDIF file and yield records using flext-ldif.

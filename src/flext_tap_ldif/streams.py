@@ -3,7 +3,6 @@
 # MIGRATED: Singer SDK imports centralized via flext-meltano
 from __future__ import annotations
 
-from pathlib import Path
 from typing import TYPE_CHECKING, ClassVar
 
 from flext_core import get_logger
@@ -76,9 +75,19 @@ class LDIFEntriesStream(Stream):
         """
         config = self._tap.config
 
-        # Determine input files to process
-        files_to_process = self._get_input_files()
+        # Use flext-ldif generic file discovery instead of duplicated logic
+        files_result = self._processor.discover_files(
+            directory_path=config.get("directory_path"),
+            file_pattern=config.get("file_pattern", "*.ldif"),
+            file_path=config.get("file_path"),
+            max_file_size_mb=config.get("max_file_size_mb", 100),
+        )
 
+        if files_result.is_failure:
+            logger.error("File discovery failed: %s", files_result.error)
+            return
+
+        files_to_process = files_result.data or []
         logger.info("Processing %d LDIF files", len(files_to_process))
 
         for file_path in files_to_process:
@@ -93,49 +102,3 @@ class LDIFEntriesStream(Stream):
                 else:
                     logger.warning("Skipping file %s due to error: %s", file_path, e)
                     continue
-
-    def _get_input_files(self) -> list[Path]:
-        """Get list of LDIF files to process based on configuration.
-
-        Returns:
-            List of Path objects for files to process.
-
-        """
-        config = self._tap.config
-        files_to_process = []
-
-        # Single file
-        if config.get("file_path"):
-            file_path = Path(config["file_path"])
-            if file_path.exists() and file_path.is_file():
-                files_to_process.append(file_path)
-
-        # Directory with pattern
-        if config.get("directory_path"):
-            directory = Path(config["directory_path"])
-            if directory.exists() and directory.is_dir():
-                pattern = config.get("file_pattern", "*.ldif")
-                files_to_process.extend(directory.glob(pattern))
-
-        # Pattern in current directory
-        elif config.get("file_pattern"):
-            current_dir = Path()
-            pattern = config["file_pattern"]
-            files_to_process.extend(current_dir.glob(pattern))
-
-        # Filter by file size limit
-        max_size_bytes = config.get("max_file_size_mb", 100) * 1024 * 1024
-        filtered_files = []
-        for file_path in files_to_process:
-            try:
-                if file_path.stat().st_size <= max_size_bytes:
-                    filtered_files.append(file_path)
-                else:
-                    logger.warning(
-                        "Skipping file %s - size %d bytes exceeds limit of %d bytes",
-                        file_path, file_path.stat().st_size, max_size_bytes,
-                    )
-            except OSError as e:
-                logger.warning("Could not check size for file %s: %s", file_path, e)
-
-        return sorted(filtered_files)
