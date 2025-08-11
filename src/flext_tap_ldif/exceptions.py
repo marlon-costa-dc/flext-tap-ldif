@@ -57,7 +57,10 @@ class FlextTapLdifParseError(FlextProcessingError):
         if entry_dn is not None:
             context["entry_dn"] = entry_dn
 
-        super().__init__(f"LDIF tap parse: {message}", **context)
+        super().__init__(f"LDIF tap parse: {message}")
+        # Store context information as instance attributes
+        for key, value in context.items():
+            setattr(self, key, value)
 
 
 class FlextTapLdifFileError(FlextTapLdifError):
