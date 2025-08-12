@@ -1,4 +1,4 @@
-"""FLEXT Tap LDIF - Enterprise Singer Tap for LDIF Data Extraction.
+"""Tap LDIF - Enterprise Singer Tap for LDIF Data Extraction.
 
 **Architecture**: Production-ready Singer tap implementing Clean Architecture, DDD, and enterprise patterns
 **Integration**: Complete flext-meltano ecosystem integration with ALL facilities utilized
@@ -71,27 +71,8 @@ from flext_meltano import (
     singer_typing,
 )
 
-# === PEP8 REORGANIZATION: Import from new structure ===
+# Local implementations with complete flext-meltano integration
 from tap_ldif.main import TapLDIF, TapLDIFConfig
-
-# Legacy imports for backward compatibility - maintain ALL existing imports
-from flext_tap_ldif.config import TapLDIFConfig as LegacyTapLDIFConfig
-from flext_tap_ldif.exceptions import (
-    FlextTapLdifConfigurationError,
-    FlextTapLdifError,
-    FlextTapLdifFileError,
-    FlextTapLdifParseError,
-    FlextTapLdifProcessingError,
-    FlextTapLdifStreamError,
-    FlextTapLdifValidationError,
-)
-from flext_tap_ldif.ldif_processor import (
-    FlextLDIFProcessor,
-    FlextLDIFProcessorWrapper,
-    LDIFProcessor,
-)
-from flext_tap_ldif.streams import LDIFEntriesStream
-from flext_tap_ldif.tap import TapLDIF as LegacyTapLDIF
 
 # Enterprise-grade aliases for backward compatibility
 FlextTapLDIF = TapLDIF
@@ -113,11 +94,8 @@ __all__: list[str] = [
     "FlextMeltanoBaseService", "FlextMeltanoBridge", "FlextMeltanoConfig", "FlextMeltanoEvent",
     "FlextMeltanoTapService", "OAuthAuthenticator", "PropertiesList", "Property", "Sink", "SQLSink",
     "Stream", "Tap", "Target", "create_meltano_tap_service", "get_tap_test_class", "singer_typing",
-    "TapLDIF", "TapLDIFConfig", "LegacyTapLDIFConfig", "FlextTapLdifConfigurationError",
-    "FlextTapLdifError", "FlextTapLdifFileError", "FlextTapLdifParseError",
-    "FlextTapLdifProcessingError", "FlextTapLdifStreamError", "FlextTapLdifValidationError",
-    "FlextLDIFProcessor", "FlextLDIFProcessorWrapper", "LDIFProcessor", "LDIFEntriesStream",
-    "LegacyTapLDIF", "FlextTapLDIF", "FlextTapLDIFConfig", "LDIFTap", "TapConfig", "__version_info__",
+    "TapLDIF", "TapLDIFConfig", "FlextTapLDIF", "FlextTapLDIFConfig", "LDIFTap", "TapConfig",
+    "__version_info__",
 ] = [
     "BatchSink",
     "FlextMeltanoBaseService",
@@ -135,24 +113,7 @@ __all__: list[str] = [
     "FlextTapLDIF",
     "FlextTapLDIFConfig",
     "FlextValueObject",
-    # Legacy exception classes
-    "FlextTapLdifConfigurationError",
-    "FlextTapLdifError",
-    "FlextTapLdifFileError",
-    "FlextTapLdifParseError",
-    "FlextTapLdifProcessingError",
-    "FlextTapLdifStreamError",
-    "FlextTapLdifValidationError",
-    # Legacy processor classes
-    "FlextLDIFProcessor",
-    "FlextLDIFProcessorWrapper",
-    # Legacy stream classes
-    "LDIFEntriesStream",
-    "LDIFProcessor",
     "LDIFTap",
-    # Legacy config classes
-    "LegacyTapLDIF",
-    "LegacyTapLDIFConfig",
     # Authentication
     "OAuthAuthenticator",
     "PropertiesList",
