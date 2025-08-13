@@ -25,16 +25,39 @@ if TYPE_CHECKING:
     )
 else:
     # Create all standard exception classes using factory pattern - eliminates 120+ lines of duplication
+    # Create classes with predictable keys matching __all__ below
     ldif_exceptions = create_module_exception_classes("flext_tap_ldif")
+    # Factory returns names based on uppercased module prefix; build mapping
+    # to the friendly aliases expected by this module.
+    _prefix = "FLEXT_TAP_LDIF"
+    _mapping = {
+        "FlextTapLdifError": f"{_prefix}Error",
+        "FlextTapLdifValidationError": f"{_prefix}ValidationError",
+        "FlextTapLdifConfigurationError": f"{_prefix}ConfigurationError",
+        "FlextTapLdifConnectionError": f"{_prefix}ConnectionError",
+        "FlextTapLdifProcessingError": f"{_prefix}ProcessingError",
+        "FlextTapLdifAuthenticationError": f"{_prefix}AuthenticationError",
+        "FlextTapLdifTimeoutError": f"{_prefix}TimeoutError",
+    }
 
     # Import generated classes for clean usage
-    FlextTapLdifError = ldif_exceptions["FlextTapLdifError"]
-    FlextTapLdifValidationError = ldif_exceptions["FlextTapLdifValidationError"]
-    FlextTapLdifConfigurationError = ldif_exceptions["FlextTapLdifConfigurationError"]
-    FlextTapLdifConnectionError = ldif_exceptions["FlextTapLdifConnectionError"]
-    FlextTapLdifProcessingError = ldif_exceptions["FlextTapLdifProcessingError"]
-    FlextTapLdifAuthenticationError = ldif_exceptions["FlextTapLdifAuthenticationError"]
-    FlextTapLdifTimeoutError = ldif_exceptions["FlextTapLdifTimeoutError"]
+    FlextTapLdifError = ldif_exceptions[_mapping["FlextTapLdifError"]]
+    FlextTapLdifValidationError = ldif_exceptions[
+        _mapping["FlextTapLdifValidationError"]
+    ]
+    FlextTapLdifConfigurationError = ldif_exceptions[
+        _mapping["FlextTapLdifConfigurationError"]
+    ]
+    FlextTapLdifConnectionError = ldif_exceptions[
+        _mapping["FlextTapLdifConnectionError"]
+    ]
+    FlextTapLdifProcessingError = ldif_exceptions[
+        _mapping["FlextTapLdifProcessingError"]
+    ]
+    FlextTapLdifAuthenticationError = ldif_exceptions[
+        _mapping["FlextTapLdifAuthenticationError"]
+    ]
+    FlextTapLdifTimeoutError = ldif_exceptions[_mapping["FlextTapLdifTimeoutError"]]
 
 
 class FlextTapLdifParseError(FlextProcessingError):

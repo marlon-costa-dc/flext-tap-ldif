@@ -395,7 +395,7 @@ class TapLDIF(Tap):
 
 
 def main() -> None:
-    """Main function for the tap."""
+    """Run the tap entry point."""
     TapLDIF.cli()
 
 
