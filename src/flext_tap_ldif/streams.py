@@ -3,6 +3,8 @@
 # MIGRATED: Singer SDK imports centralized via flext-meltano
 from __future__ import annotations
 
+import tempfile
+from pathlib import Path
 from typing import TYPE_CHECKING, ClassVar
 
 from flext_core import get_logger
@@ -63,9 +65,6 @@ class LDIFEntriesStream(Stream):
         cfg = dict(tap.config)
         if not cfg.get("file_path") and not cfg.get("directory_path"):
             # Singer SDK test harness may not pre-create the file; create a minimal one
-            import tempfile
-            from pathlib import Path
-
             _fd, path = tempfile.mkstemp(suffix=".ldif")
             Path(path).write_text(
                 "dn: cn=test,dc=example,dc=com\ncn: test\nobjectClass: top\n",
@@ -75,8 +74,6 @@ class LDIFEntriesStream(Stream):
             self._sample_file_path = path
         else:
             # If a file path exists but is empty, seed with minimal valid content
-            from pathlib import Path
-
             fp = cfg.get("file_path")
             if isinstance(fp, str):
                 file_path = Path(fp)
@@ -88,7 +85,8 @@ class LDIFEntriesStream(Stream):
                         )
                 except Exception as exc:  # Non-critical seeding failure
                     logger.warning(
-                        "Failed to seed LDIF file with sample content: %s", exc,
+                        "Failed to seed LDIF file with sample content: %s",
+                        exc,
                     )
 
     def get_records(
@@ -122,8 +120,6 @@ class LDIFEntriesStream(Stream):
             # Fallback: if a single file_path was set but discovery failed, try it
             fp = config.get("file_path")
             if isinstance(fp, str):
-                from pathlib import Path
-
                 try:
                     yield from self._processor.process_file(Path(fp))
                 except Exception:
