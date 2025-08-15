@@ -13,7 +13,7 @@ from __future__ import annotations
 
 from typing import TYPE_CHECKING, ClassVar
 
-from flext_core import FlextResult, get_logger
+from flext_core import FlextBaseConfigModel, FlextResult, get_logger
 from flext_ldif import FlextLdifAPI
 from flext_meltano import (
     Stream,
@@ -22,7 +22,7 @@ from flext_meltano import (
 )
 from flext_meltano.common import validate_directory_path, validate_file_path
 from flext_meltano.common_schemas import create_file_tap_schema
-from pydantic import BaseModel, Field, field_validator
+from pydantic import Field, field_validator
 
 if TYPE_CHECKING:
     from collections.abc import Generator, Iterable, Mapping
@@ -35,7 +35,7 @@ logger = get_logger(__name__)
 # === CONFIGURATION ===
 
 
-class TapLDIFConfig(BaseModel):
+class TapLDIFConfig(FlextBaseConfigModel):
     """Configuration for the LDIF tap."""
 
     # File Input Configuration
@@ -118,13 +118,47 @@ class TapLDIFConfig(BaseModel):
         return validate_directory_path(v)
 
     def model_post_init(self, __context: object, /) -> None:
-        """Validate configuration after initialization."""
+        """Validate configuration after initialization using FlextBaseConfigModel pattern."""
         super().model_post_init(__context)
+        
+        # Delegate to business rules validation
+        validation_result = self.validate_business_rules()
+        if not validation_result.success:
+            raise ValueError(validation_result.error)
 
+    def validate_business_rules(self) -> FlextResult[None]:
+        """Validate LDIF tap configuration business rules."""
         # Ensure at least one input source is specified
         if not any([self.file_path, self.file_pattern, self.directory_path]):
-            msg = "At least one input source must be specified: file_path, file_pattern, or directory_path"
-            raise ValueError(msg)
+            return FlextResult.fail(
+                "At least one input source must be specified: file_path, file_pattern, or directory_path"
+            )
+        
+        # Validate batch size constraints
+        if self.batch_size <= 0:
+            return FlextResult.fail("Batch size must be positive")
+        if self.batch_size > 10000:
+            return FlextResult.fail("Batch size cannot exceed 10000")
+        
+        # Validate file size constraints
+        if self.max_file_size_mb <= 0:
+            return FlextResult.fail("Max file size must be positive")
+        if self.max_file_size_mb > 1000:
+            return FlextResult.fail("Max file size cannot exceed 1000 MB")
+        
+        # Validate encoding
+        if not self.encoding:
+            return FlextResult.fail("Encoding must be specified")
+        
+        # Validate mutually exclusive filters
+        if self.attribute_filter and self.exclude_attributes:
+            overlapping = set(self.attribute_filter) & set(self.exclude_attributes)
+            if overlapping:
+                return FlextResult.fail(
+                    f"Attributes cannot be both included and excluded: {overlapping}"
+                )
+        
+        return FlextResult.ok(None)
 
     @property
     def ldif_config(self) -> dict[str, object]:
