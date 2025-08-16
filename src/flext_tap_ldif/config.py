@@ -3,9 +3,12 @@
 from __future__ import annotations
 
 from flext_core import FlextBaseConfigModel, FlextResult
-# MIGRATED: Singer SDK imports centralized via flext-meltano
-from flext_meltano.common import validate_directory_path, validate_file_path
+from flext_meltano import validate_directory_path, validate_file_path
 from pydantic import Field, field_validator
+
+# Constants for validation limits
+MAX_BATCH_SIZE = 10000
+MAX_FILE_SIZE_MB = 1000
 
 
 class TapLDIFConfig(FlextBaseConfigModel):
@@ -93,7 +96,7 @@ class TapLDIFConfig(FlextBaseConfigModel):
     def model_post_init(self, __context: object, /) -> None:
         """Validate configuration after initialization using FlextBaseConfigModel pattern."""
         super().model_post_init(__context)
-        
+
         # Delegate to business rules validation
         validation_result = self.validate_business_rules()
         if not validation_result.success:
@@ -101,36 +104,61 @@ class TapLDIFConfig(FlextBaseConfigModel):
 
     def validate_business_rules(self) -> FlextResult[None]:
         """Validate LDIF tap configuration business rules."""
-        # Ensure at least one input source is specified
+        # Validate input sources
+        input_validation = self._validate_input_sources()
+        if not input_validation.success:
+            return input_validation
+
+        # Validate constraints
+        constraints_validation = self._validate_constraints()
+        if not constraints_validation.success:
+            return constraints_validation
+
+        # Validate filters
+        filters_validation = self._validate_filters()
+        if not filters_validation.success:
+            return filters_validation
+
+        return FlextResult.ok(None)
+
+    def _validate_input_sources(self) -> FlextResult[None]:
+        """Validate input source configuration."""
         if not any([self.file_path, self.file_pattern, self.directory_path]):
             return FlextResult.fail(
-                "At least one input source must be specified: file_path, file_pattern, or directory_path"
+                "At least one input source must be specified: file_path, file_pattern, or directory_path",
             )
-        
+        return FlextResult.ok(None)
+
+    def _validate_constraints(self) -> FlextResult[None]:
+        """Validate configuration constraints."""
         # Validate batch size constraints
         if self.batch_size <= 0:
             return FlextResult.fail("Batch size must be positive")
-        if self.batch_size > 10000:
-            return FlextResult.fail("Batch size cannot exceed 10000")
-        
+        if self.batch_size > MAX_BATCH_SIZE:
+            return FlextResult.fail(f"Batch size cannot exceed {MAX_BATCH_SIZE}")
+
         # Validate file size constraints
         if self.max_file_size_mb <= 0:
             return FlextResult.fail("Max file size must be positive")
-        if self.max_file_size_mb > 1000:
-            return FlextResult.fail("Max file size cannot exceed 1000 MB")
-        
+        if self.max_file_size_mb > MAX_FILE_SIZE_MB:
+            return FlextResult.fail(
+                f"Max file size cannot exceed {MAX_FILE_SIZE_MB} MB"
+            )
+
         # Validate encoding
         if not self.encoding:
             return FlextResult.fail("Encoding must be specified")
-        
-        # Validate mutually exclusive filters
+
+        return FlextResult.ok(None)
+
+    def _validate_filters(self) -> FlextResult[None]:
+        """Validate filter configuration."""
         if self.attribute_filter and self.exclude_attributes:
             overlapping = set(self.attribute_filter) & set(self.exclude_attributes)
             if overlapping:
                 return FlextResult.fail(
-                    f"Attributes cannot be both included and excluded: {overlapping}"
+                    f"Attributes cannot be both included and excluded: {overlapping}",
                 )
-        
         return FlextResult.ok(None)
 
     @property
