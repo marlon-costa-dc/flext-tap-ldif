@@ -142,7 +142,7 @@ class TapLDIFConfig(FlextBaseConfigModel):
             return FlextResult.fail("Max file size must be positive")
         if self.max_file_size_mb > MAX_FILE_SIZE_MB:
             return FlextResult.fail(
-                f"Max file size cannot exceed {MAX_FILE_SIZE_MB} MB"
+                f"Max file size cannot exceed {MAX_FILE_SIZE_MB} MB",
             )
 
         # Validate encoding
