@@ -72,7 +72,8 @@ from flext_meltano import (
 )
 
 # === PEP8 REORGANIZATION: Import from new structure ===
-from tap_ldif.main import TapLDIF, TapLDIFConfig
+from flext_tap_ldif.tap import TapLDIF
+from flext_tap_ldif.config import TapLDIFConfig
 
 # Legacy imports for backward compatibility - maintain ALL existing imports
 from flext_tap_ldif.config import TapLDIFConfig as LegacyTapLDIFConfig

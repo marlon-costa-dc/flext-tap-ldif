@@ -85,47 +85,7 @@ make ldif-test        # Run comprehensive LDIF tests
 
 ```bash
 make build            # Build distribution packages with Poetry
-
-## TODO: GAPS DE ARQUITETURA IDENTIFICADOS - PRIORIDADE ALTA
-
-### 🚨 GAP 1: LDIF Integration Pattern Inconsistency
-**Status**: ALTO - LDIF processor wrapper pode indicar integration gap
-**Problema**:
-- FlextLDIFProcessorWrapper sugere que integration com flext-ldif não é direct
-- Wrapper pattern pode indicar impedance mismatch entre libraries
-- LDIF processing patterns podem não estar alinhados
-
-**TODO**:
-- [ ] Revisar necessidade do wrapper pattern
-- [ ] Integrar diretamente com flext-ldif APIs se possível
-- [ ] Documentar why wrapper is needed (se for necessário)
-- [ ] Padronizar LDIF integration patterns no ecosystem
-
-### 🚨 GAP 2: Singer Catalog Generation from LDIF
-**Status**: ALTO - Catalog discovery pode não ser optimal para LDIF
-**Problema**:
-- LDIF files têm schema implícito vs explicit LDAP schema
-- Singer catalog generation pode não capture LDIF structure adequadamente
-- Schema discovery logic pode precisar LDIF-specific implementation
-
-**TODO**:
-- [ ] Implementar LDIF-specific schema discovery
-- [ ] Optimize Singer catalog generation para LDIF file structure
-- [ ] Add LDIF schema inference capabilities
-- [ ] Document LDIF to Singer catalog mapping patterns
-
-### 🚨 GAP 3: File Processing Scalability
-**Status**: ALTO - LDIF file processing pode não scale para large files
-**Problema**:
-- Stream-based processing implementation não documented para large LDIF files
-- Memory usage patterns não specified
-- Incremental processing capabilities não clear
-
-**TODO**:
-- [ ] Implement streaming processing para large LDIF files
-- [ ] Add incremental processing capabilities
-- [ ] Document memory usage patterns e optimizations
-- [ ] Add performance benchmarks para different file sizes
+make build-clean      # Clean and build
 make install          # Install dependencies
 make setup            # Complete project setup (install-dev + pre-commit)
 ```
@@ -136,7 +96,18 @@ make setup            # Complete project setup (install-dev + pre-commit)
 make shell            # Python shell with project loaded
 make pre-commit       # Run pre-commit hooks manually
 make diagnose         # Project diagnostics and health info
+make doctor           # Health check + diagnostics
 make clean            # Clean build artifacts and cache
+make clean-all        # Deep clean including venv
+make reset            # Reset project (clean-all + setup)
+```
+
+### Dependencies
+
+```bash
+make deps-update      # Update dependencies
+make deps-show        # Show dependency tree
+make deps-audit       # Audit dependencies for vulnerabilities
 ```
 
 ## Configuration
@@ -182,10 +153,16 @@ The tap accepts configuration through JSON files or environment variables:
 pytest -m unit              # Unit tests only
 pytest -m integration       # Integration tests only
 pytest -m singer           # Singer protocol tests
+pytest -m slow             # Slow tests only
+pytest -m smoke            # Smoke tests only
+pytest -m e2e              # End-to-end tests only
 pytest -m "not slow"       # Fast tests only
 
 # Run single test with verbose output
 pytest tests/test_tap.py::test_discover_streams -v
+
+# Debug failing tests
+pytest tests/test_tap.py -vvs --pdb
 ```
 
 ## Code Quality Standards
@@ -207,21 +184,35 @@ pytest tests/test_tap.py::test_discover_streams -v
 ### Security
 
 - pip-audit for dependency vulnerability scanning
-- Bandit security linting
+- Bandit security linting with medium severity threshold
+- detect-secrets for secret scanning (with baseline)
 - No secrets or sensitive data in code
 - Input validation on all configuration fields
+
+### Pre-commit Hooks
+
+The project uses comprehensive pre-commit hooks for quality enforcement:
+
+```bash
+make pre-commit       # Run all pre-commit hooks manually
+pre-commit run --all-files  # Run specific hooks
+```
+
+**Enabled hooks**: Black formatting, Ruff linting/formatting, isort imports, MyPy type checking, Bandit security, Vulture dead code detection, Radon complexity analysis, YAML/TOML/JSON validation, and commit message validation.
 
 ## File Structure
 
 ```
 src/flext_tap_ldif/
-├── __init__.py           # Package initialization
+├── __init__.py           # Package initialization and exports
+├── __version__.py        # Version information  
 ├── tap.py               # Main TapLDIF class
 ├── streams.py           # LDIFEntriesStream implementation
 ├── config.py            # TapLDIFConfig with validation
 ├── ldif_processor.py    # Wrapper for flext-ldif integration
 ├── exceptions.py        # Domain-specific exception hierarchy
-└── infrastructure/      # Infrastructure layer components
+├── typings.py           # Type definitions
+└── py.typed             # PEP 561 type information marker
 
 tests/
 ├── test_tap.py         # Core tap functionality tests
@@ -255,8 +246,16 @@ tests/
 
 - Use Poetry for dependency management
 - Dependencies are path-based within FLEXT ecosystem
-- Run `poetry install --with dev,test` for full development setup
+- Run `poetry install --with dev,test,typings,security` for full development setup
 - Check compatibility with flext-core patterns
+- Use `make deps-audit` to check for vulnerabilities
+
+### Environment Issues
+
+- Requires Python 3.13+ (exactly, not 3.14+)
+- Uses path-based dependencies to other FLEXT ecosystem projects
+- Test environment is automatically configured via conftest.py
+- All environment variables are prefixed with `FLEXT_` or `SINGER_SDK_`
 
 ## Integration Points
 

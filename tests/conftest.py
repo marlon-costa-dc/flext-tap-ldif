@@ -11,8 +11,7 @@ from typing import TYPE_CHECKING
 
 import pytest
 
-if TYPE_CHECKING:
-    from collections.abc import Generator
+from collections.abc import Generator
     from pathlib import Path
 
 
@@ -149,14 +148,14 @@ mail: test.user@example.com
 def basic_tap_config(sample_ldif_file: Path) -> dict[str, object]:
     """Basic LDIF tap configuration."""
     return {
-        "ldif_file_path": str(sample_ldif_file),
-        "file_pattern": "*.ldif",
-        "encoding": "utf-8",
-        "processing_mode": "entries",
-        "max_entries_per_batch": 100,
-        "auto_discover_schema": True,
-        "validate_entries": True,
-        "enable_streaming": True,
+      "ldif_file_path": str(sample_ldif_file),
+      "file_pattern": "*.ldif",
+      "encoding": "utf-8",
+      "processing_mode": "entries",
+      "max_entries_per_batch": 100,
+      "auto_discover_schema": True,
+      "validate_entries": True,
+      "enable_streaming": True,
     }
 
 
@@ -164,14 +163,14 @@ def basic_tap_config(sample_ldif_file: Path) -> dict[str, object]:
 def changes_tap_config(sample_ldif_changes_file: Path) -> dict[str, object]:
     """LDIF tap configuration for changes processing."""
     return {
-        "ldif_file_path": str(sample_ldif_changes_file),
-        "file_pattern": "*.ldif",
-        "encoding": "utf-8",
-        "processing_mode": "changes",
-        "max_entries_per_batch": 50,
-        "auto_discover_schema": True,
-        "validate_entries": True,
-        "enable_streaming": True,
+      "ldif_file_path": str(sample_ldif_changes_file),
+      "file_pattern": "*.ldif",
+      "encoding": "utf-8",
+      "processing_mode": "changes",
+      "max_entries_per_batch": 50,
+      "auto_discover_schema": True,
+      "validate_entries": True,
+      "enable_streaming": True,
     }
 
 
@@ -179,15 +178,15 @@ def changes_tap_config(sample_ldif_changes_file: Path) -> dict[str, object]:
 def directory_tap_config(ldif_directory: Path) -> dict[str, object]:
     """LDIF tap configuration for directory processing."""
     return {
-        "ldif_file_path": str(ldif_directory),
-        "file_pattern": "*.ldif",
-        "encoding": "utf-8",
-        "processing_mode": "entries",
-        "max_entries_per_batch": 100,
-        "auto_discover_schema": True,
-        "validate_entries": True,
-        "enable_streaming": True,
-        "enable_parallel_processing": True,
+      "ldif_file_path": str(ldif_directory),
+      "file_pattern": "*.ldif",
+      "encoding": "utf-8",
+      "processing_mode": "entries",
+      "max_entries_per_batch": 100,
+      "auto_discover_schema": True,
+      "validate_entries": True,
+      "enable_streaming": True,
+      "enable_parallel_processing": True,
     }
 
 
@@ -195,15 +194,15 @@ def directory_tap_config(ldif_directory: Path) -> dict[str, object]:
 def filtered_tap_config(sample_ldif_file: Path) -> dict[str, object]:
     """LDIF tap configuration with filters."""
     return {
-        "ldif_file_path": str(sample_ldif_file),
-        "file_pattern": "*.ldif",
-        "encoding": "utf-8",
-        "processing_mode": "entries",
-        "max_entries_per_batch": 100,
-        "auto_discover_schema": True,
-        "validate_entries": True,
-        "include_object_classes": ["inetOrgPerson"],
-        "exclude_dns": ["ou=groups"],
+      "ldif_file_path": str(sample_ldif_file),
+      "file_pattern": "*.ldif",
+      "encoding": "utf-8",
+      "processing_mode": "entries",
+      "max_entries_per_batch": 100,
+      "auto_discover_schema": True,
+      "validate_entries": True,
+      "include_object_classes": ["inetOrgPerson"],
+      "exclude_dns": ["ou=groups"],
     }
 
 
@@ -214,19 +213,19 @@ def large_ldif_file(tmp_path: Path) -> Path:
     ldif_file = tmp_path / "large.ldif"
 
     with ldif_file.open("w", encoding="utf-8") as f:
-        f.write("version: 1\n\n")
+      f.write("version: 1\n\n")
 
-        # Generate 1000 entries for performance testing
-        for i in range(1000):
-            f.write(f"dn: cn=user{i:04d},ou=users,dc=example,dc=com\n")
-            f.write("objectClass: inetOrgPerson\n")
-            f.write("objectClass: person\n")
-            f.write(f"cn: user{i:04d}\n")
-            f.write(f"sn: User{i:04d}\n")
-            f.write("givenName: User\n")
-            f.write(f"mail: user{i:04d}@example.com\n")
-            f.write(f"employeeNumber: {i:04d}\n")
-            f.write("\n")
+      # Generate 1000 entries for performance testing
+      for i in range(1000):
+          f.write(f"dn: cn=user{i:04d},ou=users,dc=example,dc=com\n")
+          f.write("objectClass: inetOrgPerson\n")
+          f.write("objectClass: person\n")
+          f.write(f"cn: user{i:04d}\n")
+          f.write(f"sn: User{i:04d}\n")
+          f.write("givenName: User\n")
+          f.write(f"mail: user{i:04d}@example.com\n")
+          f.write(f"employeeNumber: {i:04d}\n")
+          f.write("\n")
 
     return ldif_file
 
@@ -235,16 +234,16 @@ def large_ldif_file(tmp_path: Path) -> Path:
 def performance_tap_config(large_ldif_file: Path) -> dict[str, object]:
     """LDIF tap configuration for performance testing."""
     return {
-        "ldif_file_path": str(large_ldif_file),
-        "file_pattern": "*.ldif",
-        "encoding": "utf-8",
-        "processing_mode": "entries",
-        "max_entries_per_batch": 250,
-        "auto_discover_schema": True,
-        "validate_entries": True,
-        "enable_streaming": True,
-        "buffer_size": 16384,
-        "max_memory_usage": 50 * 1024 * 1024,  # 50MB
+      "ldif_file_path": str(large_ldif_file),
+      "file_pattern": "*.ldif",
+      "encoding": "utf-8",
+      "processing_mode": "entries",
+      "max_entries_per_batch": 250,
+      "auto_discover_schema": True,
+      "validate_entries": True,
+      "enable_streaming": True,
+      "buffer_size": 16384,
+      "max_memory_usage": 50 * 1024 * 1024,  # 50MB
     }
 
 
@@ -300,32 +299,32 @@ description: User with unicode characters: àáâãäåæç
 def singer_catalog_config() -> dict[str, object]:
     """Singer catalog configuration."""
     return {
-        "streams": [
-            {
-                "tap_stream_id": "ldif_entries",
-                "schema": {
-                    "type": "object",
-                    "properties": {
-                        "dn": {"type": "string"},
-                        "source_file": {"type": "string"},
-                        "source_file_mtime": {"type": "number"},
-                        "objectClass": {"type": "array", "items": {"type": "string"}},
-                        "cn": {"type": "array", "items": {"type": "string"}},
-                        "mail": {"type": "array", "items": {"type": "string"}},
-                    },
-                },
-                "metadata": [
-                    {
-                        "breadcrumb": [],
-                        "metadata": {
-                            "replication-method": "INCREMENTAL",
-                            "replication-key": "source_file_mtime",
-                            "selected": True,
-                        },
-                    },
-                ],
-            },
-        ],
+      "streams": [
+          {
+              "tap_stream_id": "ldif_entries",
+              "schema": {
+                  "type": "object",
+                  "properties": {
+                      "dn": {"type": "string"},
+                      "source_file": {"type": "string"},
+                      "source_file_mtime": {"type": "number"},
+                      "objectClass": {"type": "array", "items": {"type": "string"}},
+                      "cn": {"type": "array", "items": {"type": "string"}},
+                      "mail": {"type": "array", "items": {"type": "string"}},
+                  },
+              },
+              "metadata": [
+                  {
+                      "breadcrumb": [],
+                      "metadata": {
+                          "replication-method": "INCREMENTAL",
+                          "replication-key": "source_file_mtime",
+                          "selected": True,
+                      },
+                  },
+              ],
+          },
+      ],
     }
 
 
@@ -333,14 +332,14 @@ def singer_catalog_config() -> dict[str, object]:
 def singer_state() -> dict[str, object]:
     """Singer state for incremental sync."""
     return {
-        "currently_syncing": None,
-        "bookmarks": {
-            "ldif_entries": {
-                "replication_key_value": 1640995200.0,  # 2022-01-01 00:00:00
-                "version": 1,
-                "processed_files": [],
-            },
-        },
+      "currently_syncing": None,
+      "bookmarks": {
+          "ldif_entries": {
+              "replication_key_value": 1640995200.0,  # 2022-01-01 00:00:00
+              "version": 1,
+              "processed_files": [],
+          },
+      },
     }
 
 
@@ -373,10 +372,10 @@ def invalid_ldif_file(tmp_path: Path, invalid_ldif_content: str) -> Path:
 def benchmark_config() -> dict[str, object]:
     """Configuration for performance benchmarking."""
     return {
-        "max_entries_to_process": 1000,
-        "expected_processing_time": 30.0,  # seconds
-        "memory_limit": 100 * 1024 * 1024,  # 100MB
-        "batch_sizes": [50, 100, 250, 500, 1000],
+      "max_entries_to_process": 1000,
+      "expected_processing_time": 30.0,  # seconds
+      "memory_limit": 100 * 1024 * 1024,  # 100MB
+      "batch_sizes": [50, 100, 250, 500, 1000],
     }
 
 
@@ -400,24 +399,24 @@ def mock_ldif_tap() -> object:
     """Mock LDIF tap for testing."""
 
     class MockLDIFTap:
-        def __init__(self, config: dict[str, object]) -> None:
-            self.config = config
-            self.discovered_streams: list[dict[str, object]] = []
+      def __init__(self, config: dict[str, object]) -> None:
+          self.config = config
+          self.discovered_streams: list[dict[str, object]] = []
 
-        def discover_streams(self) -> list[dict[str, object]]:
-            return self.discovered_streams
+      def discover_streams(self) -> list[dict[str, object]]:
+          return self.discovered_streams
 
-        async def sync_records(self) -> list[dict[str, object]]:
-            return [
-                {
-                    "dn": "cn=test,ou=users,dc=example,dc=com",
-                    "objectClass": ["inetOrgPerson", "person"],
-                    "cn": ["test"],
-                    "mail": ["test@example.com"],
-                    "source_file": "test.ldif",
-                    "source_file_mtime": 1640995200.0,
-                },
-            ]
+      async def sync_records(self) -> list[dict[str, object]]:
+          return [
+              {
+                  "dn": "cn=test,ou=users,dc=example,dc=com",
+                  "objectClass": ["inetOrgPerson", "person"],
+                  "cn": ["test"],
+                  "mail": ["test@example.com"],
+                  "source_file": "test.ldif",
+                  "source_file_mtime": 1640995200.0,
+              },
+          ]
 
     return MockLDIFTap
 
@@ -427,18 +426,18 @@ def mock_ldif_parser() -> object:
     """Mock LDIF parser for testing."""
 
     class MockLDIFParser:
-        def __init__(self, config: dict[str, object]) -> None:
-            self.config = config
-            self.parsed_entries: list[dict[str, object]] = []
+      def __init__(self, config: dict[str, object]) -> None:
+          self.config = config
+          self.parsed_entries: list[dict[str, object]] = []
 
-        async def parse_file(self, file_path: str) -> dict[str, object]:  # noqa: ARG002
-            return {
-                "success": True,
-                "entries": self.parsed_entries,
-                "errors": [],
-            }
+      async def parse_file(self, file_path: str) -> dict[str, object]:  # noqa: ARG002
+          return {
+              "success": True,
+              "entries": self.parsed_entries,
+              "errors": [],
+          }
 
-        def add_mock_entry(self, entry: dict[str, object]) -> None:
-            self.parsed_entries.append(entry)
+      def add_mock_entry(self, entry: dict[str, object]) -> None:
+          self.parsed_entries.append(entry)
 
     return MockLDIFParser

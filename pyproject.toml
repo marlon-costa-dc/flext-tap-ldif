@@ -54,8 +54,8 @@ Repository = "https://github.com/flext-sh/flext"
 Documentation = "https://github.com/flext-sh/flext/blob/main/README.md"
 
 [project.scripts]
-tap-ldif = "tap_ldif.main:main"
-flext-tap-ldif = "tap_ldif.main:main"
+tap-ldif = "flext_tap_ldif.main:main"
+flext-tap-ldif = "flext_tap_ldif.main:main"
 # Backward compatibility
 tap-ldif-legacy = "flext_tap_ldif.tap:main"
 
@@ -63,7 +63,8 @@ tap-ldif-legacy = "flext_tap_ldif.tap:main"
 extend = "../.ruff-shared.toml"
 
 [tool.ruff.lint.isort]
-known-first-party = ["flext_tap_ldif", "tap_ldif"]
+known-first-party = ["flext_tap_ldif"]
+
 [tool.mypy]
 # Strict mode - enables all recommended checks
 strict = true
@@ -123,7 +124,7 @@ files = ["src", "tests"]
 plugins = ["pydantic.mypy"]
 
 # Cache
-sqlite_cache = true
+# sqlite_cache = true
 cache_dir = ".mypy_cache"
 
 # Advanced checks
@@ -165,12 +166,8 @@ warn_required_dynamic_aliases = true
 include = "flext_tap_ldif"
 from = "src"
 
-[[tool.poetry.packages]]
-include = "tap_ldif"
-from = "src"
-
 [tool.deptry]
-known_first_party = ["flext_tap_ldif", "tap_ldif"]
+known_first_party = ["flext_tap_ldif"]
 
 [tool.pytest.ini_options]
 minversion = "8.0"
@@ -180,7 +177,6 @@ addopts = [
     "--strict-markers",
     "--strict-config",
     "--cov=flext_tap_ldif",
-    "--cov=tap_ldif",
     "--cov-branch",
     "--cov-report=term-missing:skip-covered",
     "--cov-report=html:reports/coverage",
