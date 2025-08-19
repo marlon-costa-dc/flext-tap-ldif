@@ -119,47 +119,47 @@ class TapLDIFConfig(FlextBaseConfigModel):
         if not filters_validation.success:
             return filters_validation
 
-        return FlextResult.ok(None)
+        return FlextResult[None].ok(None)
 
     def _validate_input_sources(self) -> FlextResult[None]:
         """Validate input source configuration."""
         if not any([self.file_path, self.file_pattern, self.directory_path]):
-            return FlextResult.fail(
+            return FlextResult[None].fail(
                 "At least one input source must be specified: file_path, file_pattern, or directory_path",
             )
-        return FlextResult.ok(None)
+        return FlextResult[None].ok(None)
 
     def _validate_constraints(self) -> FlextResult[None]:
         """Validate configuration constraints."""
         # Validate batch size constraints
         if self.batch_size <= 0:
-            return FlextResult.fail("Batch size must be positive")
+            return FlextResult[None].fail("Batch size must be positive")
         if self.batch_size > MAX_BATCH_SIZE:
-            return FlextResult.fail(f"Batch size cannot exceed {MAX_BATCH_SIZE}")
+            return FlextResult[None].fail(f"Batch size cannot exceed {MAX_BATCH_SIZE}")
 
         # Validate file size constraints
         if self.max_file_size_mb <= 0:
-            return FlextResult.fail("Max file size must be positive")
+            return FlextResult[None].fail("Max file size must be positive")
         if self.max_file_size_mb > MAX_FILE_SIZE_MB:
-            return FlextResult.fail(
+            return FlextResult[None].fail(
                 f"Max file size cannot exceed {MAX_FILE_SIZE_MB} MB",
             )
 
         # Validate encoding
         if not self.encoding:
-            return FlextResult.fail("Encoding must be specified")
+            return FlextResult[None].fail("Encoding must be specified")
 
-        return FlextResult.ok(None)
+        return FlextResult[None].ok(None)
 
     def _validate_filters(self) -> FlextResult[None]:
         """Validate filter configuration."""
         if self.attribute_filter and self.exclude_attributes:
             overlapping = set(self.attribute_filter) & set(self.exclude_attributes)
             if overlapping:
-                return FlextResult.fail(
+                return FlextResult[None].fail(
                     f"Attributes cannot be both included and excluded: {overlapping}",
                 )
-        return FlextResult.ok(None)
+        return FlextResult[None].ok(None)
 
     @property
     def ldif_config(self) -> dict[str, object]:
