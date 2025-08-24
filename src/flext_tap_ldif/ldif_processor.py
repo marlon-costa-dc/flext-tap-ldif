@@ -90,6 +90,7 @@ class FlextLDIFProcessorWrapper:
                 if not parse_result.success:
                     msg: str = f"Failed to parse LDIF: {parse_result.error}"
                     self._raise_parse_error(msg)
+                    return  # Type hint helper (unreachable but helps MyPy understand control flow)
                 entries = parse_result.data
 
                 if entries is None:

@@ -44,14 +44,11 @@ from flext_core import FlextResult, FlextValue, get_logger
 # Re-export ALL flext-meltano facilities for full ecosystem integration
 from flext_meltano import (
     BatchSink,
-    FlextMeltanoBaseService,
     # Bridge integration
     FlextMeltanoBridge,
     # Configuration and validation
     FlextMeltanoConfig,
-    FlextMeltanoEvent,
-    # RESTStream,  # Not available in flext_meltano yet
-    # Enterprise services from flext-meltano.base
+    # Enterprise services
     FlextMeltanoTapService,
     # Authentication patterns
     OAuthAuthenticator,
@@ -64,7 +61,6 @@ from flext_meltano import (
     Stream,
     Tap,
     Target,
-    create_meltano_tap_service,
     # Testing utilities
     get_tap_test_class,
     # Singer typing utilities (centralized)
@@ -111,13 +107,10 @@ __version_info__ = tuple(int(x) for x in __version__.split(".") if x.isdigit())
 # Complete public API exports
 __all__: list[str] = [
     "BatchSink",
-    "FlextMeltanoBaseService",
     # Bridge integration
     "FlextMeltanoBridge",
     # Configuration patterns
     "FlextMeltanoConfig",
-    "FlextMeltanoEvent",
-    # "RESTStream",  # Not available yet
     # Enterprise services
     "FlextMeltanoTapService",
     # === FLEXT-CORE RE-EXPORTS ===
@@ -162,7 +155,6 @@ __all__: list[str] = [
     # === METADATA ===
     "__version__",
     "__version_info__",
-    "create_meltano_tap_service",
     "get_logger",
     # Testing
     "get_tap_test_class",

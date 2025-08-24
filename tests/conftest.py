@@ -428,7 +428,7 @@ def mock_ldif_parser() -> object:
             self.config = config
             self.parsed_entries: list[dict[str, object]] = []
 
-        async def parse_file(self, file_path: str) -> dict[str, object]:  # noqa: ARG002
+        async def parse_file(self, file_path: str) -> dict[str, object]:
             return {
                 "success": True,
                 "entries": self.parsed_entries,
