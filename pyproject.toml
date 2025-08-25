@@ -60,7 +60,7 @@ flext-tap-ldif = "flext_tap_ldif.main:main"
 tap-ldif-legacy = "flext_tap_ldif.tap:main"
 
 [tool.ruff]
-extend = "../.config/tools/.ruff-shared.toml"
+extend = "../ruff-shared.toml"
 lint.isort.known-first-party = ["flext_tap_ldif"]
 
 [tool.mypy]
