@@ -15,7 +15,7 @@ from flext_core import FlextProcessingError, create_module_exception_classes
 if TYPE_CHECKING:
     from flext_core.exceptions import FlextExceptions
 
-    type FlextExceptionType = type[FlextExceptions.Base.FlextExceptions.ErrorMixin]
+    type FlextExceptionType = type[FlextExceptions.Base.FlextExceptionsMixin]
 
 # Create all standard exception classes using factory pattern - avoids heavy
 # conditional imports and ensures runtime availability without TYPE_CHECKING.
