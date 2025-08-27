@@ -15,7 +15,7 @@ from flext_core import FlextProcessingError, create_module_exception_classes
 if TYPE_CHECKING:
     from flext_core.exceptions import FlextExceptions
 
-    type FlextExceptionType = type[FlextExceptions.Base.FlextErrorMixin]
+    type FlextExceptionType = type[FlextExceptions.Base.FlextExceptions.ErrorMixin]
 
 # Create all standard exception classes using factory pattern - avoids heavy
 # conditional imports and ensures runtime availability without TYPE_CHECKING.
@@ -32,17 +32,27 @@ _mapping = {
 }
 
 # Type cast to help MyPy understand these are class types, not variables
-FlextTapLdifError = cast("FlextExceptionType", ldif_exceptions[_mapping["FlextTapLdifError"]])
-FlextTapLdifValidationError = cast("FlextExceptionType", ldif_exceptions[_mapping["FlextTapLdifValidationError"]])
-FlextTapLdifConfigurationError = cast("FlextExceptionType", ldif_exceptions[
-    _mapping["FlextTapLdifConfigurationError"]
-])
-FlextTapLdifConnectionError = cast("FlextExceptionType", ldif_exceptions[_mapping["FlextTapLdifConnectionError"]])
-FlextTapLdifProcessingError = cast("FlextExceptionType", ldif_exceptions[_mapping["FlextTapLdifProcessingError"]])
-FlextTapLdifAuthenticationError = cast("FlextExceptionType", ldif_exceptions[
-    _mapping["FlextTapLdifAuthenticationError"]
-])
-FlextTapLdifTimeoutError = cast("FlextExceptionType", ldif_exceptions[_mapping["FlextTapLdifTimeoutError"]])
+FlextTapLdifError = cast(
+    "FlextExceptionType", ldif_exceptions[_mapping["FlextTapLdifError"]]
+)
+FlextTapLdifValidationError = cast(
+    "FlextExceptionType", ldif_exceptions[_mapping["FlextTapLdifValidationError"]]
+)
+FlextTapLdifConfigurationError = cast(
+    "FlextExceptionType", ldif_exceptions[_mapping["FlextTapLdifConfigurationError"]]
+)
+FlextTapLdifConnectionError = cast(
+    "FlextExceptionType", ldif_exceptions[_mapping["FlextTapLdifConnectionError"]]
+)
+FlextTapLdifProcessingError = cast(
+    "FlextExceptionType", ldif_exceptions[_mapping["FlextTapLdifProcessingError"]]
+)
+FlextTapLdifAuthenticationError = cast(
+    "FlextExceptionType", ldif_exceptions[_mapping["FlextTapLdifAuthenticationError"]]
+)
+FlextTapLdifTimeoutError = cast(
+    "FlextExceptionType", ldif_exceptions[_mapping["FlextTapLdifTimeoutError"]]
+)
 
 
 class FlextTapLdifParseError(FlextProcessingError):
