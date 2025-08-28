@@ -70,7 +70,7 @@ strict = true
 # Additional strict checks beyond default strict mode
 check_untyped_defs = true
 disallow_any_decorated = false
-disallow_any_explicit = true  # Allow explicit Any for Pydantic BaseModel
+disallow_any_explicit = true  # Allow explicit object for Pydantic BaseModel
 disallow_any_expr = false          # Too restrictive for real-world usage
 disallow_any_generics = true
 disallow_any_unimported = true
