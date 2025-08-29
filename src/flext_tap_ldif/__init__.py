@@ -38,7 +38,7 @@ from __future__ import annotations
 import importlib.metadata
 
 # flext-core imports
-from flext_core import FlextResult, FlextValue, get_logger
+from flext_core import FlextResult, FlextModels.Value, FlextLogger
 
 # === FLEXT-MELTANO COMPLETE INTEGRATION ===
 # Re-export ALL flext-meltano facilities for full ecosystem integration
@@ -118,7 +118,7 @@ __all__: list[str] = [
     # === BACKWARD COMPATIBILITY ===
     "FlextTapLDIF",
     "FlextTapLDIFConfig",
-    "FlextValue",
+    "FlextModels.Value",
     # Legacy exception classes
     "FlextTapLdifConfigurationError",
     "FlextTapLdifError",
@@ -155,7 +155,7 @@ __all__: list[str] = [
     # === METADATA ===
     "__version__",
     "__version_info__",
-    "get_logger",
+    "FlextLogger",
     # Testing
     "get_tap_test_class",
     # Singer typing

@@ -13,10 +13,10 @@ from collections.abc import Generator
 from pathlib import Path
 from typing import NoReturn
 
-from flext_core import FlextResult, get_logger
+from flext_core import FlextLogger, FlextResult
 from flext_ldif import FlextLdifAPI
 
-logger = get_logger(__name__)
+logger = FlextLogger(__name__)
 # Use flext-ldif processor instead of reimplementing LDIF functionality
 LDIFProcessor = FlextLdifAPI
 

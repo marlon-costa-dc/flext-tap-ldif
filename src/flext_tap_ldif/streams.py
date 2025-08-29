@@ -6,13 +6,13 @@ import tempfile
 from collections.abc import Iterable, Mapping
 from pathlib import Path
 
-from flext_core import get_logger
+from flext_core import FlextLogger
 from flext_meltano import Stream, singer_typing as th
 
 from flext_tap_ldif.ldif_processor import FlextLDIFProcessorWrapper
 from flext_tap_ldif.tap import TapLDIF
 
-logger = get_logger(__name__)
+logger = FlextLogger(__name__)
 
 
 class LDIFEntriesStream(Stream):
