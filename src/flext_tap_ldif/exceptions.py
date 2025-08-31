@@ -8,14 +8,12 @@ Domain-specific exceptions using factory pattern to eliminate duplication.
 
 from __future__ import annotations
 
-from typing import TYPE_CHECKING, cast
+from typing import cast
 
-from flext_core import FlextProcessingError, create_module_exception_classes
+from flext_core import FlextExceptions, create_module_exception_classes
+from flext_core.exceptions import FlextExceptions
 
-if TYPE_CHECKING:
-    from flext_core.exceptions import FlextExceptions
-
-    type FlextExceptionType = type[FlextExceptions.Base.FlextExceptionsMixin]
+type FlextExceptionType = type[FlextExceptions.Base.FlextExceptionsMixin]
 
 # Create all standard exception classes using factory pattern - avoids heavy
 # conditional imports and ensures runtime availability without TYPE_CHECKING.
@@ -55,7 +53,7 @@ FlextTapLdifTimeoutError = cast(
 )
 
 
-class FlextTapLdifParseError(FlextProcessingError):
+class FlextTapLdifParseError(FlextExceptions.ProcessingError):
     """LDIF tap parsing errors with LDIF-specific context."""
 
     def __init__(

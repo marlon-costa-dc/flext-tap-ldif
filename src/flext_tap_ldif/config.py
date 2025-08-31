@@ -2,7 +2,7 @@
 
 from __future__ import annotations
 
-from flext_core import FlextConfig.BaseConfigModel, FlextResult
+from flext_core import FlextConfig, FlextResult
 from flext_meltano import validate_directory_path, validate_file_path
 from pydantic import Field, field_validator
 
@@ -11,7 +11,7 @@ MAX_BATCH_SIZE = 10000
 MAX_FILE_SIZE_MB = 1000
 
 
-class TapLDIFConfig(FlextConfig.BaseConfigModel):
+class TapLDIFConfig(FlextConfig.BaseModel):
     """Configuration for the LDIF tap."""
 
     # File Input Configuration
@@ -94,7 +94,7 @@ class TapLDIFConfig(FlextConfig.BaseConfigModel):
         return validate_directory_path(v)
 
     def model_post_init(self, __context: object, /) -> None:
-        """Validate configuration after initialization using FlextConfig.BaseConfigModel pattern."""
+        """Validate configuration after initialization using FlextConfig.BaseModel pattern."""
         super().model_post_init(__context)
 
         # Delegate to business rules validation
