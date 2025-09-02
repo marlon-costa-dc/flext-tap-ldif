@@ -14,11 +14,11 @@ from pathlib import Path
 from typing import NoReturn
 
 from flext_core import FlextLogger, FlextResult
-from flext_ldif import FlextLdifAPI
+from flext_ldif import FlextLDIFAPI
 
 logger = FlextLogger(__name__)
 # Use flext-ldif processor instead of reimplementing LDIF functionality
-LDIFProcessor = FlextLdifAPI
+LDIFProcessor = FlextLDIFAPI
 
 # Backward compatibility alias removed (causes self-assignment warning)
 
@@ -34,7 +34,7 @@ class FlextLDIFProcessorWrapper:
 
         """
         self.config = config
-        self._api = FlextLdifAPI()
+        self._api = FlextLDIFAPI()
 
     def _raise_parse_error(self, msg: str) -> NoReturn:
         """Raise parse error with message."""
@@ -98,7 +98,7 @@ class FlextLDIFProcessorWrapper:
                     return
 
                 for entry in entries:
-                    # Convert FlextLdifEntry to expected dictionary format
+                    # Convert FlextLDIFEntry to expected dictionary format
                     yield {
                         "dn": str(entry.dn),
                         "attributes": entry.attributes.attributes,

@@ -79,7 +79,7 @@ class FlextTapLdifParseError(FlextExceptions.ProcessingError):
             setattr(self, key, value)
 
 
-class FlextTapLdifFileError(FlextTapLdifError):  # type: ignore[valid-type,misc]
+class FlextTapLdifFileError(FlextTapLdifError):
     """LDIF tap file operation errors with file-specific context."""
 
     def __init__(
@@ -99,7 +99,7 @@ class FlextTapLdifFileError(FlextTapLdifError):  # type: ignore[valid-type,misc]
         super().__init__(f"LDIF tap file: {message}", context=context)
 
 
-class FlextTapLdifStreamError(FlextTapLdifError):  # type: ignore[valid-type,misc]
+class FlextTapLdifStreamError(FlextTapLdifError):
     """LDIF tap stream processing errors with stream-specific context."""
 
     def __init__(

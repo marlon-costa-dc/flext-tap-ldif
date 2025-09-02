@@ -2,7 +2,7 @@
 
 from __future__ import annotations
 
-from flext_core import FlextConfig, FlextResult
+from flext_core import FlextModels, FlextResult
 from flext_meltano import validate_directory_path, validate_file_path
 from pydantic import Field, field_validator
 
@@ -11,7 +11,7 @@ MAX_BATCH_SIZE = 10000
 MAX_FILE_SIZE_MB = 1000
 
 
-class TapLDIFConfig(FlextConfig.BaseModel):
+class TapLDIFConfig(FlextModels.BaseModel):
     """Configuration for the LDIF tap."""
 
     # File Input Configuration
