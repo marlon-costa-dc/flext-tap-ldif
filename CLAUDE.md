@@ -205,7 +205,7 @@ pre-commit run --all-files  # Run specific hooks
 ```
 src/flext_tap_ldif/
 ├── __init__.py           # Package initialization and exports
-├── __version__.py        # Version information  
+├── __version__.py        # Version information
 ├── tap.py               # Main TapLDIF class
 ├── streams.py           # LDIFEntriesStream implementation
 ├── config.py            # TapLDIFConfig with validation
