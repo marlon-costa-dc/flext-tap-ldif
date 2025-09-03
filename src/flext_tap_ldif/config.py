@@ -11,7 +11,7 @@ MAX_BATCH_SIZE = 10000
 MAX_FILE_SIZE_MB = 1000
 
 
-class TapLDIFConfig(FlextModels.BaseConfig):
+class TapLDIFConfig(FlextModels.Config):
     """Configuration for the LDIF tap."""
 
     # File Input Configuration
