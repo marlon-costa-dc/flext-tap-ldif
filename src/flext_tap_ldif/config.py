@@ -1,6 +1,20 @@
-"""Configuration for FLEXT Tap LDIF using flext-core patterns."""
+"""Configuration for FLEXT Tap LDIF using flext-core patterns.
+
+Copyright (c) 2025 FLEXT Team. All rights reserved.
+SPDX-License-Identifier: MIT
+"""
 
 from __future__ import annotations
+
+from flext_core import FlextTypes
+
+"""
+Copyright (c) 2025 FLEXT Team. All rights reserved.
+SPDX-License-Identifier: MIT
+"""
+
+# ruff: noqa: CPY001
+
 
 from flext_core import FlextModels, FlextResult
 from flext_meltano import validate_directory_path, validate_file_path
@@ -36,17 +50,17 @@ class TapLDIFConfig(FlextModels.Config):
         description="Filter entries by base DN pattern",
     )
 
-    object_class_filter: list[str] | None = Field(
+    object_class_filter: FlextTypes.Core.StringList | None = Field(
         default=None,
         description="Filter entries by object class",
     )
 
-    attribute_filter: list[str] | None = Field(
+    attribute_filter: FlextTypes.Core.StringList | None = Field(
         default=None,
         description="Include only specified attributes",
     )
 
-    exclude_attributes: list[str] | None = Field(
+    exclude_attributes: FlextTypes.Core.StringList | None = Field(
         default=None,
         description="Exclude specified attributes",
     )
@@ -162,7 +176,7 @@ class TapLDIFConfig(FlextModels.Config):
         return FlextResult[None].ok(None)
 
     @property
-    def ldif_config(self) -> dict[str, object]:
+    def ldif_config(self) -> FlextTypes.Core.Dict:
         """Get LDIF-specific configuration as a dictionary."""
         return {
             "file_path": self.file_path,

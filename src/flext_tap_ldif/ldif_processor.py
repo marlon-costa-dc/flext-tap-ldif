@@ -1,3 +1,11 @@
+"""Copyright (c) 2025 FLEXT Team. All rights reserved.
+SPDX-License-Identifier: MIT.
+"""
+
+from __future__ import annotations
+
+from flext_core import FlextTypes
+
 """LDIF file processing module for FLEXT Tap LDIF using flext-ldif infrastructure.
 
 Copyright (c) 2025 Flext. All rights reserved.
@@ -7,7 +15,6 @@ This module eliminates code duplication by using the FLEXT LDIF infrastructure
 implementation from flext-ldif project.
 """
 
-from __future__ import annotations
 
 from collections.abc import Generator
 from pathlib import Path
@@ -26,11 +33,14 @@ LDIFProcessor = FlextLDIFAPI
 class FlextLDIFProcessorWrapper:
     """Wrapper for FlextLDIFProcessor to maintain API compatibility."""
 
-    def __init__(self, config: dict[str, object]) -> None:
+    def __init__(self, config: FlextTypes.Core.Dict) -> None:
         """Initialize the LDIF processor using flext-ldif infrastructure.
 
         Args:
             config: Configuration dictionary from the tap.
+
+        Returns:
+            object: Description of return value.
 
         """
         self.config = config
@@ -67,7 +77,7 @@ class FlextLDIFProcessorWrapper:
             max_file_size_mb=max_file_size_mb,
         )
 
-    def process_file(self, file_path: Path) -> Generator[dict[str, object]]:
+    def process_file(self, file_path: Path) -> Generator[FlextTypes.Core.Dict]:
         """Process a single LDIF file and yield records using flext-ldif.
 
         Args:
@@ -75,6 +85,9 @@ class FlextLDIFProcessorWrapper:
 
         Yields:
             Dictionary records representing LDIF entries.
+
+        Returns:
+            Generator[FlextTypes.Core.Dict]:: Description of return value.
 
         """
         logger.info("Processing LDIF file: %s", file_path)
@@ -120,7 +133,7 @@ class FlextLDIFProcessorWrapper:
 # Create the original class name for backward compatibility
 FlextLDIFProcessor: type[FlextLDIFProcessorWrapper] = FlextLDIFProcessorWrapper
 
-__all__: list[str] = [
+__all__: FlextTypes.Core.StringList = [
     "FlextLDIFProcessor",
     "LDIFProcessor",
 ]

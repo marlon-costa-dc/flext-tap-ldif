@@ -1,6 +1,18 @@
-"""LDIF streams for flext-tap-ldif using flext-ldif infrastructure."""
+"""LDIF streams for flext-tap-ldif using flext-ldif infrastructure.
+
+Copyright (c) 2025 FLEXT Team. All rights reserved.
+SPDX-License-Identifier: MIT
+"""
 
 from __future__ import annotations
+
+from flext_core import FlextTypes
+
+"""
+Copyright (c) 2025 FLEXT Team. All rights reserved.
+SPDX-License-Identifier: MIT
+"""
+
 
 import tempfile
 from collections.abc import Iterable, Mapping
@@ -18,11 +30,24 @@ logger = FlextLogger(__name__)
 class LDIFEntriesStream(Stream):
     """LDIF entries stream using flext-ldif for ALL processing."""
 
+
+from flext_core import FlextLogger
+from flext_meltano import Stream
+
+logger = FlextLogger(__name__)
+
+
+class LDIFEntriesStream(Stream):
+    """LDIF entries stream using flext-ldif for ALL processing."""
+
     def __init__(self, tap: TapLDIF) -> None:
         """Initialize LDIF entries stream.
 
         Args:
             tap: The parent tap instance.
+
+        Returns:
+            object: Description of return value.
 
         """
         super().__init__(tap, name="ldif_entries", schema=self._get_schema())
@@ -57,7 +82,7 @@ class LDIFEntriesStream(Stream):
                         exc,
                     )
 
-    def _get_schema(self) -> dict[str, object]:
+    def _get_schema(self) -> FlextTypes.Core.Dict:
         """Get schema for LDIF entries."""
         return th.PropertiesList(
             th.Property("dn", th.StringType, description="Distinguished Name"),
@@ -84,7 +109,7 @@ class LDIFEntriesStream(Stream):
     def get_records(
         self,
         _context: Mapping[str, object] | None = None,
-    ) -> Iterable[dict[str, object]]:
+    ) -> Iterable[FlextTypes.Core.Dict]:
         """Return a generator of record-type dictionary objects.
 
         Args:

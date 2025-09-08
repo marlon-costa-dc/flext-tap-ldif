@@ -1,39 +1,17 @@
-"""FLEXT Tap LDIF - Enterprise Singer Tap for LDIF Data Extraction.
+"""Copyright (c) 2025 FLEXT Team. All rights reserved.
+SPDX-License-Identifier: MIT.
+"""
 
-**Architecture**: Production-ready Singer tap implementing Clean Architecture, DDD, and enterprise patterns
-**Integration**: Complete flext-meltano ecosystem integration with ALL facilities utilized
-**Quality**: 100% type safety, 90%+ test coverage, zero-tolerance quality standards
+from __future__ import annotations
+from flext_core import FlextTypes
 
-## Enterprise Integration Features:
 
-1. **Complete flext-meltano Integration**: Uses ALL flext-meltano facilities
-   - FlextMeltanoTapService base class for enterprise patterns
-   - Centralized Singer SDK imports and typing
-   - Common schema definitions from flext-meltano.common_schemas
-   - Enterprise bridge integration for Go ↔ Python communication
-
-2. **Foundation Library Integration**: Full flext-core pattern adoption
-   - FlextResult railway-oriented programming throughout
-   - Enterprise logging with FlextLogger
-   - Dependency injection with flext-core container
-   - FlextConfig for configuration management
-
-3. **LDIF Processing Integration**: Complete flext-ldif utilization
-   - Uses real LDIF processing logic from flext-ldif infrastructure
-   - Leverages flext-ldif parsing and validation capabilities
-   - Enterprise-grade error handling and recovery
-
-4. **Production Readiness**: Zero-tolerance quality standards
-   - 100% type safety with strict MyPy compliance
-   - 90%+ test coverage with comprehensive test suite
-   - All lint rules passing with Ruff
-   - Security scanning with Bandit and pip-audit
-
+"""FLEXT Tap LDIF - Enterprise Singer Tap for LDIF Data Extraction."""
+"""
 Copyright (c) 2025 FLEXT Team. All rights reserved.
 SPDX-License-Identifier: MIT
 """
 
-from __future__ import annotations
 
 import importlib.metadata
 
@@ -105,7 +83,7 @@ except importlib.metadata.PackageNotFoundError:
 __version_info__ = tuple(int(x) for x in __version__.split(".") if x.isdigit())
 
 # Complete public API exports
-__all__: list[str] = [
+__all__: FlextTypes.Core.StringList = [
     "BatchSink",
     # Bridge integration
     "FlextMeltanoBridge",
