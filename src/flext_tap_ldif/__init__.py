@@ -3,8 +3,8 @@ SPDX-License-Identifier: MIT.
 """
 
 from __future__ import annotations
-from flext_core import FlextTypes
 
+from flext_core import FlextTypes
 
 """FLEXT Tap LDIF - Enterprise Singer Tap for LDIF Data Extraction."""
 """
@@ -16,7 +16,7 @@ SPDX-License-Identifier: MIT
 import importlib.metadata
 
 # flext-core imports
-from flext_core import FlextResult, FlextModels, FlextLogger
+from flext_core import FlextLogger, FlextModels, FlextResult
 
 # === FLEXT-MELTANO COMPLETE INTEGRATION ===
 # Re-export ALL flext-meltano facilities for full ecosystem integration
@@ -45,12 +45,8 @@ from flext_meltano import (
     singer_typing,
 )
 
-# === PEP8 REORGANIZATION: Import from new structure ===
-from flext_tap_ldif.tap import TapLDIF
-from flext_tap_ldif.config import TapLDIFConfig
-
 # Legacy imports for backward compatibility - maintain ALL existing imports
-from flext_tap_ldif.config import TapLDIFConfig as LegacyTapLDIFConfig
+from flext_tap_ldif.config import TapLDIFConfig, TapLDIFConfig as LegacyTapLDIFConfig
 from flext_tap_ldif.exceptions import (
     FlextTapLdifConfigurationError,
     FlextTapLdifError,
@@ -66,7 +62,9 @@ from flext_tap_ldif.ldif_processor import (
     LDIFProcessor,
 )
 from flext_tap_ldif.streams import LDIFEntriesStream
-from flext_tap_ldif.tap import TapLDIF as LegacyTapLDIF
+
+# === PEP8 REORGANIZATION: Import from new structure ===
+from flext_tap_ldif.tap import TapLDIF, TapLDIF as LegacyTapLDIF
 
 # Enterprise-grade aliases for backward compatibility
 FlextTapLDIF = TapLDIF
@@ -85,18 +83,22 @@ __version_info__ = tuple(int(x) for x in __version__.split(".") if x.isdigit())
 # Complete public API exports
 __all__: FlextTypes.Core.StringList = [
     "BatchSink",
+    # Legacy processor classes
+    "FlextLDIFProcessor",
+    "FlextLDIFProcessorWrapper",
+    "FlextLogger",
     # Bridge integration
     "FlextMeltanoBridge",
     # Configuration patterns
     "FlextMeltanoConfig",
     # Enterprise services
     "FlextMeltanoTapService",
+    "FlextModels",
     # === FLEXT-CORE RE-EXPORTS ===
     "FlextResult",
     # === BACKWARD COMPATIBILITY ===
     "FlextTapLDIF",
     "FlextTapLDIFConfig",
-    "FlextModels",
     # Legacy exception classes
     "FlextTapLdifConfigurationError",
     "FlextTapLdifError",
@@ -105,9 +107,6 @@ __all__: FlextTypes.Core.StringList = [
     "FlextTapLdifProcessingError",
     "FlextTapLdifStreamError",
     "FlextTapLdifValidationError",
-    # Legacy processor classes
-    "FlextLDIFProcessor",
-    "FlextLDIFProcessorWrapper",
     # Legacy stream classes
     "LDIFEntriesStream",
     "LDIFProcessor",
@@ -133,7 +132,6 @@ __all__: FlextTypes.Core.StringList = [
     # === METADATA ===
     "__version__",
     "__version_info__",
-    "FlextLogger",
     # Testing
     "get_tap_test_class",
     # Singer typing
