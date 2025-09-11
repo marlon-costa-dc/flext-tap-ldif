@@ -13,8 +13,6 @@ Copyright (c) 2025 FLEXT Team. All rights reserved.
 SPDX-License-Identifier: MIT
 """
 
-# ruff: noqa: CPY001
-
 
 from flext_core import FlextModels, FlextResult
 from flext_meltano import validate_directory_path, validate_file_path
